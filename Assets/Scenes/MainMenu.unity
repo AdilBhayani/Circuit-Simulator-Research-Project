@@ -123,7 +123,7 @@ GameObject:
   - component: {fileID: 24612881}
   - component: {fileID: 24612880}
   m_Layer: 5
-  m_Name: VideoControlsLabel
+  m_Name: CreditsLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -179,7 +179,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Video Controls
+  m_Text: Credits
 --- !u!222 &24612881
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -298,7 +298,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.100692034, g: 0.6310345, b: 0.7607844, a: 1}
+  m_Color: {r: 0.4026817, g: 0.4190965, b: 0.9607843, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -444,6 +444,11 @@ Prefab:
       propertyPath: m_LocalScale.x
       value: -20.392937
       objectReference: {fileID: 0}
+    - target: {fileID: 21200000, guid: 7461a7b0cf97947fd9b9e4502fd2d07b, type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: a1d8c7f1924d99c4588641aadeea15b8,
+        type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7461a7b0cf97947fd9b9e4502fd2d07b, type: 2}
   m_IsPrefabParent: 0
@@ -942,7 +947,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.100692034, g: 0.6310345, b: 0.7607844, a: 1}
+  m_Color: {r: 0.100692056, g: 0.1783499, b: 0.7607844, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1285,7 +1290,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.100692034, g: 0.6310345, b: 0.7607844, a: 1}
+  m_Color: {r: 0.4026817, g: 0.4190965, b: 0.9607843, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1464,7 +1469,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Video Controls
+  m_Text: Credits
 --- !u!222 &1108054707
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1780,7 +1785,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.100692034, g: 0.6310345, b: 0.7607844, a: 1}
+  m_Color: {r: 0.100692056, g: 0.1783499, b: 0.7607844, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2148,7 +2153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.100692034, g: 0.6310345, b: 0.7607844, a: 1}
+  m_Color: {r: 0.4026817, g: 0.4190965, b: 0.9607843, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2192,7 +2197,7 @@ GameObject:
   - component: {fileID: 1706852283}
   - component: {fileID: 1706852282}
   m_Layer: 5
-  m_Name: VideoButton
+  m_Name: CreditsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2292,7 +2297,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.100692034, g: 0.6310345, b: 0.7607844, a: 1}
+  m_Color: {r: 0.4026817, g: 0.4190965, b: 0.9607843, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2400,7 +2405,7 @@ GameObject:
   - component: {fileID: 1796202715}
   - component: {fileID: 1796202718}
   m_Layer: 5
-  m_Name: VideoPanel
+  m_Name: CreditsPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2460,7 +2465,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.100692034, g: 0.6310345, b: 0.7607844, a: 1}
+  m_Color: {r: 0.100692056, g: 0.1783499, b: 0.7607844, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -3054,7 +3059,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.100692034, g: 0.6310345, b: 0.7607844, a: 1}
+  m_Color: {r: 0.4026817, g: 0.4190965, b: 0.9607843, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -3228,7 +3233,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.100692034, g: 0.6310345, b: 0.7607844, a: 1}
+  m_Color: {r: 0.100692056, g: 0.1783499, b: 0.7607844, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

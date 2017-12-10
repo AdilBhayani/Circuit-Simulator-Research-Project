@@ -12,6 +12,7 @@ public class SoundManager : MonoBehaviour
     private float musicVolume = 1.0f;               //The music volume.
     private float efxVolume = 1.0f;                 //The efx volume.
 
+   
     void Awake()
     {
         //Check if there is already an instance of SoundManager
@@ -44,24 +45,28 @@ public class SoundManager : MonoBehaviour
         efxSource.Play();
     }
 
+    //Method called by slider to control Overall Volume
     public void ChangeMasterVolume(float volume)
     {
         masterVolume = volume;
         UpdateVolumes();
     }
 
+    //Method called by slider to control Music Volume
     public void ChangeMusicVolume(float volume)
     {
         musicVolume = volume;
         UpdateVolumes();
     }
 
+    //Method called by slider to control effects volume
     public void ChangeEfxVolume(float volume)
     {
         efxVolume = volume;
         UpdateVolumes();
     }
 
+    //Method internally called to update output volume
     private void UpdateVolumes()
     {
         musicSource.volume = masterVolume * musicVolume;

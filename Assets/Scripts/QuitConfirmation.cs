@@ -15,7 +15,7 @@ public class QuitConfirmation : MonoBehaviour
     }
 
     /// <summary>
-    /// Called if clicked on No (confirmation)
+    /// Called if clicked on Cancel (confirmation)
     /// </summary>
     public void DoConfirmQuitNo()
     {
@@ -24,7 +24,7 @@ public class QuitConfirmation : MonoBehaviour
     }
 
     /// <summary>
-    /// Called if clicked on Yes (confirmation)
+    /// Called if clicked on Quit (confirmation)
     /// </summary>
     public void DoConfirmQuitYes()
     {

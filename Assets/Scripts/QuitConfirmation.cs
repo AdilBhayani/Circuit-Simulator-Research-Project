@@ -5,13 +5,35 @@ using UnityEngine;
 public class QuitConfirmation : MonoBehaviour
 {
 
-    public CanvasGroup uiCanvasGroup; public CanvasGroup confirmQuitCanvasGroup;
+    public CanvasGroup uiCanvasGroup;
+    public CanvasGroup confirmQuitCanvasGroup;
+    private bool quitting = false;
 
     // Use this for initialization
     private void Awake()
     {
-        enableMainUI();
-        disableConfirmUI();
+        quitting = false;
+        EnableMainUI();
+        DisableConfirmUI();
+    }
+
+    public void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            GameObject overallMenu = GameObject.FindGameObjectWithTag("OverallMenu");
+            if (overallMenu && overallMenu.activeSelf)
+            {
+                if (quitting)
+                {
+                    DoConfirmQuitNo();
+                }
+                else
+                {
+                    DoQuit();
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -19,8 +41,9 @@ public class QuitConfirmation : MonoBehaviour
     /// </summary>
     public void DoConfirmQuitNo()
     {
-        enableMainUI();
-        disableConfirmUI();
+        quitting = false;
+        EnableMainUI();
+        DisableConfirmUI();
     }
 
     /// <summary>
@@ -40,8 +63,9 @@ public class QuitConfirmation : MonoBehaviour
     /// </summary>
     public void DoQuit()
     {
+        quitting = true;
         //reduce the visibility of normal UI, and disable all interraction
-        uiCanvasGroup.alpha = 0.2f;
+        uiCanvasGroup.alpha = 0.35f;
         uiCanvasGroup.interactable = false;
         uiCanvasGroup.blocksRaycasts = false;
 
@@ -55,7 +79,7 @@ public class QuitConfirmation : MonoBehaviour
     /// <summary>
     /// Enables the Main user interface
     /// </summary>
-    private void enableMainUI()
+    private void EnableMainUI()
     {
         uiCanvasGroup.alpha = 1;
         uiCanvasGroup.interactable = true;
@@ -65,7 +89,7 @@ public class QuitConfirmation : MonoBehaviour
     /// <summary>
     /// Disables the confirmation dialog
     /// </summary>
-    private void disableConfirmUI()
+    private void DisableConfirmUI()
     {
         confirmQuitCanvasGroup.alpha = 0;
         confirmQuitCanvasGroup.interactable = false;

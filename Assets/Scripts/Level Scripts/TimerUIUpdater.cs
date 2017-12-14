@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TextUIUpdater : MonoBehaviour {
+public class TimerUIUpdater : MonoBehaviour {
 
     public float startTime;
     public Text timerText;

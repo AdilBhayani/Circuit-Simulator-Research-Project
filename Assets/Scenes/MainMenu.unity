@@ -1439,6 +1439,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eventSystem: {fileID: 1565335661}
   selectedObject: {fileID: 825518868}
+--- !u!114 &648487388 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 11400000, guid: b6a1cf4e3eeaf9a4ca38bf8acb910a6d,
+    type: 2}
+  m_PrefabInternal: {fileID: 427749705}
+  m_Script: {fileID: -113659843, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
 --- !u!1 &799112642
 GameObject:
   m_ObjectHideFlags: 0
@@ -2508,6 +2514,12 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1445163715}
+--- !u!114 &1487680572 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 11400000, guid: b6a1cf4e3eeaf9a4ca38bf8acb910a6d,
+    type: 2}
+  m_PrefabInternal: {fileID: 1149306608}
+  m_Script: {fileID: -113659843, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
 --- !u!1 &1507449787
 GameObject:
   m_ObjectHideFlags: 0
@@ -2911,6 +2923,12 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1706852280}
+--- !u!114 &1757565308 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 11400000, guid: b6a1cf4e3eeaf9a4ca38bf8acb910a6d,
+    type: 2}
+  m_PrefabInternal: {fileID: 1927227027}
+  m_Script: {fileID: -113659843, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
 --- !u!1 &1759957091
 GameObject:
   m_ObjectHideFlags: 0
@@ -3386,7 +3404,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 11400000, guid: b6a1cf4e3eeaf9a4ca38bf8acb910a6d, type: 2}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22400008, guid: b6a1cf4e3eeaf9a4ca38bf8acb910a6d, type: 2}
       propertyPath: m_LocalPosition.x
@@ -3478,23 +3496,23 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: b6a1cf4e3eeaf9a4ca38bf8acb910a6d, type: 2}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: b6a1cf4e3eeaf9a4ca38bf8acb910a6d, type: 2}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: b6a1cf4e3eeaf9a4ca38bf8acb910a6d, type: 2}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1767644334}
+      objectReference: {fileID: 2138100084}
     - target: {fileID: 11400000, guid: b6a1cf4e3eeaf9a4ca38bf8acb910a6d, type: 2}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ChangeMasterVolume
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: b6a1cf4e3eeaf9a4ca38bf8acb910a6d, type: 2}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: b6a1cf4e3eeaf9a4ca38bf8acb910a6d, type: 2}
       propertyPath: m_Value
@@ -4264,6 +4282,7 @@ GameObject:
   - component: {fileID: 2138100087}
   - component: {fileID: 2138100086}
   - component: {fileID: 2138100089}
+  - component: {fileID: 2138100090}
   m_Layer: 5
   m_Name: AudioPanel
   m_TagString: AudioMenu
@@ -4365,6 +4384,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eventSystem: {fileID: 1565335661}
   selectedObject: {fileID: 1958413400}
+--- !u!114 &2138100090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2138100084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0695c2318780f2542bb830b8199aad4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  masterSlider: {fileID: 1757565308}
+  musicSlider: {fileID: 648487388}
+  efxSlider: {fileID: 1487680572}
 --- !u!1 &2142014200
 GameObject:
   m_ObjectHideFlags: 0

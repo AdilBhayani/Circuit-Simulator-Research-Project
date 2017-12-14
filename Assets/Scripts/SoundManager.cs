@@ -58,34 +58,12 @@ public class SoundManager : MonoBehaviour
         efxSource.Play();
     }
 
-    //Method called by slider to control Overall Volume
-    public void ChangeMasterVolume(float volume)
+    //Method updates volume every frame
+    private void Update()
     {
-        Debug.Log("Changing master volume to: " + volume.ToString());
-        PlayerPrefs.SetFloat(masterVolumeTitle, volume);
         masterVolume = PlayerPrefs.GetFloat(masterVolumeTitle);
-        UpdateVolumes();
-    }
-
-    //Method called by slider to control Music Volume
-    public void ChangeMusicVolume(float volume)
-    {
-        PlayerPrefs.SetFloat(MusicVolumeTitle, volume);
-        musicVolume = PlayerPrefs.GetFloat(MusicVolumeTitle, volume); ;
-        UpdateVolumes();
-    }
-
-    //Method called by slider to control effects volume
-    public void ChangeEfxVolume(float volume)
-    {
-        PlayerPrefs.SetFloat(EfxVolumeTitle, volume);
-        efxVolume = PlayerPrefs.GetFloat(EfxVolumeTitle, volume);
-        UpdateVolumes();
-    }
-
-    //Method internally called to update output volume
-    private void UpdateVolumes()
-    {
+        musicVolume = PlayerPrefs.GetFloat(MusicVolumeTitle);
+        efxVolume = PlayerPrefs.GetFloat(EfxVolumeTitle);
         musicSource.volume = masterVolume * musicVolume;
         efxSource.volume = masterVolume * efxVolume;
     }

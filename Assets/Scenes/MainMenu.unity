@@ -587,7 +587,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 257125504}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bff4cc9be31acb40a3f1c3a3d530500, type: 3}
+  m_Script: {fileID: 11500000, guid: 78dcba04878622b40961cb1f433c74cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   uiCanvasGroup: {fileID: 802807552}

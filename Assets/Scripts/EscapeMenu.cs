@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class QuitConfirmation : MonoBehaviour
-{
-
+public class EscapeMenu : MonoBehaviour {
     public CanvasGroup uiCanvasGroup;
     public CanvasGroup confirmQuitCanvasGroup;
     private bool quitting = false;
+    private string overallMenuTitle = "OverallMenu";
 
     // Use this for initialization
-    private void Awake()
+    private void Start ()
     {
         quitting = false;
         EnableMainUI();
@@ -21,7 +20,7 @@ public class QuitConfirmation : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.Escape))
         {
-            GameObject overallMenu = GameObject.FindGameObjectWithTag("OverallMenu");
+            GameObject overallMenu = GameObject.FindGameObjectWithTag(overallMenuTitle);
             if (overallMenu && overallMenu.activeSelf)
             {
                 if (quitting)
@@ -52,9 +51,9 @@ public class QuitConfirmation : MonoBehaviour
     public void DoConfirmQuitYes()
     {
         #if UNITY_EDITOR
-	        UnityEditor.EditorApplication.isPlaying = false;
+	                UnityEditor.EditorApplication.isPlaying = false;
         #else
-            Application.Quit();
+                Application.Quit();
         #endif
     }
 
@@ -74,7 +73,6 @@ public class QuitConfirmation : MonoBehaviour
         confirmQuitCanvasGroup.interactable = true;
         confirmQuitCanvasGroup.blocksRaycasts = true;
     }
-
 
     /// <summary>
     /// Enables the Main user interface

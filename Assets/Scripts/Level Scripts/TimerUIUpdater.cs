@@ -14,7 +14,6 @@ public class TimerUIUpdater : MonoBehaviour {
 	void Update () {
         startTime -= Time.deltaTime;
         minutes = (int)startTime / 60;
-        Debug.Log("minutes is: " + minutes);
         seconds = (int)startTime - minutes * 60;
         timerText.text = string.Format("Timer: {0}:{1}", minutes.ToString("D2"),seconds.ToString("D2"));
     }

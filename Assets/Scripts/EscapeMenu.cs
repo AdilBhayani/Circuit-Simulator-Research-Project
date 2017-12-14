@@ -40,6 +40,7 @@ public class EscapeMenu : MonoBehaviour {
     /// </summary>
     public void DoConfirmQuitNo()
     {
+        Time.timeScale = 1;
         quitting = false;
         EnableMainUI();
         DisableConfirmUI();
@@ -62,6 +63,7 @@ public class EscapeMenu : MonoBehaviour {
     /// </summary>
     public void DoQuit()
     {
+        Time.timeScale = 0;
         quitting = true;
         //reduce the visibility of normal UI, and disable all interraction
         uiCanvasGroup.alpha = 0.35f;

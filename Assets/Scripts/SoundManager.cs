@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class SoundManager : MonoBehaviour
 {
@@ -8,22 +9,34 @@ public class SoundManager : MonoBehaviour
     public static SoundManager instance = null;     //Allows other scripts to call functions from SoundManager.     
     public float lowPitchRange = .95f;              //The lowest a sound effect will be randomly pitched.
     public float highPitchRange = 1.05f;            //The highest a sound effect will be randomly pitched.
-    private float masterVolume = 1.0f;              //The volume overall for both efx and music.
-    private float musicVolume = 1.0f;               //The music volume.
-    private float efxVolume = 1.0f;                 //The efx volume.
+    private float masterVolume;              //The volume overall for both efx and music.
+    private float musicVolume;               //The music volume.
+    private float efxVolume;                 //The efx volume.
+    private string masterVolumeTitle = "MasterVolume";
+    private string MusicVolumeTitle = "MusicVolume";
+    private string EfxVolumeTitle = "EfxVolume";
 
-   
     void Awake()
     {
         //Check if there is already an instance of SoundManager
         if (instance == null)
+        {
+            Debug.Log("Awake called on first load only");
+            PlayerPrefs.SetFloat(masterVolumeTitle, 1.0f);
+            PlayerPrefs.SetFloat(MusicVolumeTitle, 1.0f);
+            PlayerPrefs.SetFloat(EfxVolumeTitle, 1.0f);
+            masterVolume = PlayerPrefs.GetFloat(masterVolumeTitle);
+            musicVolume = PlayerPrefs.GetFloat(MusicVolumeTitle);
+            efxVolume = PlayerPrefs.GetFloat(EfxVolumeTitle);
             //if not, set it to this.
             instance = this;
+        }
         //If instance already exists:
-        else if (instance != this)
+        else if (instance != this) {
+            Debug.Log("Destroying repeated instance");
             //Destroy this, this enforces our singleton pattern so there can only be one instance of SoundManager.
             Destroy(gameObject);
-
+        }
         //Set SoundManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
         DontDestroyOnLoad(gameObject);
     }
@@ -48,21 +61,25 @@ public class SoundManager : MonoBehaviour
     //Method called by slider to control Overall Volume
     public void ChangeMasterVolume(float volume)
     {
-        masterVolume = volume;
+        Debug.Log("Changing master volume to: " + volume.ToString());
+        PlayerPrefs.SetFloat(masterVolumeTitle, volume);
+        masterVolume = PlayerPrefs.GetFloat(masterVolumeTitle);
         UpdateVolumes();
     }
 
     //Method called by slider to control Music Volume
     public void ChangeMusicVolume(float volume)
     {
-        musicVolume = volume;
+        PlayerPrefs.SetFloat(MusicVolumeTitle, volume);
+        musicVolume = PlayerPrefs.GetFloat(MusicVolumeTitle, volume); ;
         UpdateVolumes();
     }
 
     //Method called by slider to control effects volume
     public void ChangeEfxVolume(float volume)
     {
-        efxVolume = volume;
+        PlayerPrefs.SetFloat(EfxVolumeTitle, volume);
+        efxVolume = PlayerPrefs.GetFloat(EfxVolumeTitle, volume);
         UpdateVolumes();
     }
 

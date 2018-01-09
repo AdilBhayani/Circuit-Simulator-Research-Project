@@ -10,6 +10,7 @@ public class EscapeMenu : MonoBehaviour {
     // Use this for initialization
     private void Start ()
     {
+        Time.timeScale = 1;
         quitting = false;
         EnableMainUI();
         DisableConfirmUI();

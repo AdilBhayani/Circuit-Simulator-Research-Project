@@ -290,6 +290,7 @@ GameObject:
   - component: {fileID: 109172109}
   - component: {fileID: 109172108}
   - component: {fileID: 109172107}
+  - component: {fileID: 109172111}
   - component: {fileID: 109172110}
   m_Layer: 0
   m_Name: Back
@@ -366,6 +367,17 @@ MonoBehaviour:
           m_StringArgument: 1
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 109172111}
+        m_MethodName: playLevelSwitchSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &109172108
@@ -410,6 +422,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 23a502a52a8bbd84c9b93977bf9f075b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &109172111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 109172105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6246d6b9f9ff9ac4abecfe94b6fc7b95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &313860384
@@ -1907,6 +1930,7 @@ GameObject:
   - component: {fileID: 1236759215}
   - component: {fileID: 1236759214}
   - component: {fileID: 1236759213}
+  - component: {fileID: 1236759217}
   - component: {fileID: 1236759216}
   m_Layer: 5
   m_Name: ReturnButton
@@ -1984,6 +2008,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 1
+      - m_Target: {fileID: 1236759217}
+        m_MethodName: playButtonSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1236759214
@@ -2028,6 +2063,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 23a502a52a8bbd84c9b93977bf9f075b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1236759217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1236759211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6246d6b9f9ff9ac4abecfe94b6fc7b95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1272020990
@@ -2319,6 +2365,7 @@ GameObject:
   - component: {fileID: 1571320582}
   - component: {fileID: 1571320581}
   - component: {fileID: 1571320580}
+  - component: {fileID: 1571320583}
   m_Layer: 5
   m_Name: CancelButton
   m_TagString: Untagged
@@ -2395,6 +2442,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 1
+      - m_Target: {fileID: 1571320583}
+        m_MethodName: playButtonSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1571320581
@@ -2430,6 +2488,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1571320578}
+--- !u!114 &1571320583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1571320578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6246d6b9f9ff9ac4abecfe94b6fc7b95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1879108281
 GameObject:
   m_ObjectHideFlags: 0
@@ -2654,6 +2723,7 @@ GameObject:
   - component: {fileID: 2035442231}
   - component: {fileID: 2035442230}
   - component: {fileID: 2035442229}
+  - component: {fileID: 2035442233}
   - component: {fileID: 2035442232}
   m_Layer: 0
   m_Name: Forward
@@ -2730,6 +2800,17 @@ MonoBehaviour:
           m_StringArgument: 2
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 2035442233}
+        m_MethodName: playLevelSwitchSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &2035442230
@@ -2776,6 +2857,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23a502a52a8bbd84c9b93977bf9f075b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2035442233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2035442227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6246d6b9f9ff9ac4abecfe94b6fc7b95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2129671308
 GameObject:
   m_ObjectHideFlags: 0
@@ -2785,6 +2877,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2129671310}
   - component: {fileID: 2129671309}
+  - component: {fileID: 2129671311}
   m_Layer: 0
   m_Name: EscapeManager
   m_TagString: Untagged
@@ -2818,6 +2911,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2129671311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2129671308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6246d6b9f9ff9ac4abecfe94b6fc7b95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2135289707
 GameObject:
   m_ObjectHideFlags: 0

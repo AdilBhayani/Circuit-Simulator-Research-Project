@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class EfxUpdater : MonoBehaviour {
-	private string currentEfxTitle = "currentEfx";
+	private static string currentEfxTitle = "currentEfx";
 	
     // Use this for initialization
     void Start () {
@@ -16,15 +16,23 @@ public class EfxUpdater : MonoBehaviour {
 		
     }
 	
-	private void playSound(string efxName){
+	private static void playSound(string efxName){
 		PlayerPrefs.SetString(currentEfxTitle, efxName);
 	}
 	
-	public void playButtonSound(){
+	public static void playButtonSoundStatic(){
 		playSound("buttonPress");
 	}
 	
-	public void playLevelSwitchSound(){
+	public static void playLevelSwitchSoundStatic(){
 		playSound("levelSwitch");
+	}
+
+	public void playLevelSwitchSound(){
+		playLevelSwitchSoundStatic();
+	}
+
+	public void playButtonSound(){
+		playButtonSoundStatic();
 	}
 }

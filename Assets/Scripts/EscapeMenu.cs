@@ -7,7 +7,6 @@ public class EscapeMenu : MonoBehaviour {
     public CanvasGroup confirmQuitCanvasGroup;
     private bool quitting = false;
     private string overallMenuTitle = "OverallMenu";
-
     // Use this for initialization
     private void Start ()
     {
@@ -25,6 +24,7 @@ public class EscapeMenu : MonoBehaviour {
             {
                 if (quitting)
                 {
+                    EfxUpdater.playButtonSoundStatic();
                     DoConfirmQuitNo();
                 }
                 else
@@ -74,6 +74,7 @@ public class EscapeMenu : MonoBehaviour {
         confirmQuitCanvasGroup.alpha = 1;
         confirmQuitCanvasGroup.interactable = true;
         confirmQuitCanvasGroup.blocksRaycasts = true;
+        EfxUpdater.playButtonSoundStatic();
     }
 
     /// <summary>

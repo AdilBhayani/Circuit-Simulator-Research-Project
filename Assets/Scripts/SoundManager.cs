@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class SoundManager : MonoBehaviour
 {
+	public AudioClip buttonPress;
+	public AudioClip levelSwitch;
     public AudioSource efxSource;                   //Drag a reference to the audio source which will play the sound effects.
     public AudioSource musicSource;                 //Drag a reference to the audio source which will play the music.
     public static SoundManager instance = null;     //Allows other scripts to call functions from SoundManager.     
@@ -12,20 +14,22 @@ public class SoundManager : MonoBehaviour
     private float masterVolume;              //The volume overall for both efx and music.
     private float musicVolume;               //The music volume.
     private float efxVolume;                 //The efx volume.
-    private string masterVolumeTitle = "MasterVolume";
+    private string MasterVolumeTitle = "MasterVolume";
     private string MusicVolumeTitle = "MusicVolume";
     private string EfxVolumeTitle = "EfxVolume";
-
+	private string currentEfxTitle = "currentEfx";
+	
     void Awake()
     {
         //Check if there is already an instance of SoundManager
         if (instance == null)
         {
             Debug.Log("Awake called on first load only");
-            PlayerPrefs.SetFloat(masterVolumeTitle, 1.0f);
+            PlayerPrefs.SetFloat(MasterVolumeTitle, 1.0f);
             PlayerPrefs.SetFloat(MusicVolumeTitle, 1.0f);
             PlayerPrefs.SetFloat(EfxVolumeTitle, 1.0f);
-            masterVolume = PlayerPrefs.GetFloat(masterVolumeTitle);
+			PlayerPrefs.SetString(currentEfxTitle, "");
+            masterVolume = PlayerPrefs.GetFloat(MasterVolumeTitle);
             musicVolume = PlayerPrefs.GetFloat(MusicVolumeTitle);
             efxVolume = PlayerPrefs.GetFloat(EfxVolumeTitle);
             //if not, set it to this.
@@ -43,11 +47,13 @@ public class SoundManager : MonoBehaviour
 
 
     //Used to play single sound clips.
-    public void PlaySingle(AudioClip clip)
+    public void PlaySingle(string audioClipString)
     {
-        //Set the clip of our efxSource audio source to the clip passed in as a parameter.
-        efxSource.clip = clip;
-
+		if (audioClipString == "buttonPress"){
+			efxSource.clip = buttonPress;
+		}else if (audioClipString == "levelSwitch"){
+			efxSource.clip = levelSwitch;
+		}
         //Choose a random pitch to play back our clip at between our high and low pitch ranges.
         float randomPitch = Random.Range(lowPitchRange, highPitchRange);
 
@@ -61,11 +67,15 @@ public class SoundManager : MonoBehaviour
     //Method updates volume every frame
     private void Update()
     {
-        masterVolume = PlayerPrefs.GetFloat(masterVolumeTitle);
+        masterVolume = PlayerPrefs.GetFloat(MasterVolumeTitle);
         musicVolume = PlayerPrefs.GetFloat(MusicVolumeTitle);
         efxVolume = PlayerPrefs.GetFloat(EfxVolumeTitle);
         musicSource.volume = masterVolume * musicVolume;
         efxSource.volume = masterVolume * efxVolume;
+		if (!string.IsNullOrEmpty(PlayerPrefs.GetString(currentEfxTitle))){
+			PlaySingle(PlayerPrefs.GetString(currentEfxTitle));
+			PlayerPrefs.SetString(currentEfxTitle, "");
+		}
     }
 
 }

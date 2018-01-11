@@ -12,5 +12,32 @@ EditorBuildSettings:
     path: Assets/Scenes/Level1.unity
     guid: 12a62608b9d1bb4489e9c0adde87adcc
   - enabled: 1
-    path: Assets/Scenes/Level2.unity
-    guid: 23d77833e8400924a9296078e62ece72
+    path: Assets/_Scenes/EquivalentResistance.unity
+    guid: 7d9e83b5c4334dc449aef8506af26309
+  - enabled: 0
+    path: Assets/_Scenes/Startscreen.unity
+    guid: cd6f0e6d54515a64d97d43080ba901c3
+  - enabled: 0
+    path: Assets/_Scenes/GameMenu.unity
+    guid: c05732e454e7c8343b611d3bb848fc42
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/_Scenes/CircuitCreator.unity
+    guid: 3b5aa0afd17a7fe4f94386d3e5699757
+  - enabled: 0
+    path: Assets/_Scenes/PractisePage.unity
+    guid: fc3036fb74648ad4791354de177f8464
+  - enabled: 0
+    path: Assets/_Scenes/PlayScreen.unity
+    guid: 91d937af86778314fbfb6332b5949cdb
+  - enabled: 0
+    path: Assets/_Scenes/HelpScreen.unity
+    guid: c81385ed4896e684f83f67a0212f932d
+  - enabled: 0
+    path: Assets/_Scenes/SelectPlayer.unity
+    guid: 084851335c3f04f4dbbe98e62760d30f

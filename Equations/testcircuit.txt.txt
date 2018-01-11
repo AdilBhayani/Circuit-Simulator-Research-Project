@@ -1,0 +1,2 @@
+Resistor2,Resistor1,series
+

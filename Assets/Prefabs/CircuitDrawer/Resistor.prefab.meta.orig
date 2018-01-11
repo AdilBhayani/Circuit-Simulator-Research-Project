@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+<<<<<<< HEAD
+guid: f3fe45e119d82bd44ad9509c22fc71c5
+timeCreated: 1500547995
+licenseType: Free
+NativeFormatImporter:
+=======
+guid: 01cdc716a6fd54543aff295ff46cdbcf
+timeCreated: 1500299550
+licenseType: Free
+NativeFormatImporter:
+  mainObjectFileID: -1
+>>>>>>> development
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

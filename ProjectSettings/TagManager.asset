@@ -8,6 +8,10 @@ TagManager:
   - InstructionsMenu
   - AudioMenu
   - CreditsMenu
+  - Wire
+  - Resistor
+  - Value
+  - Connector
   layers:
   - Default
   - TransparentFX

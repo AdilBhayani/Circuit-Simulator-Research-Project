@@ -10,7 +10,7 @@ public class Resistor : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		spirit = resistor.GetComponent<SpriteRenderer> ();
-		spirit.color = new Color (1f, 1f, 1f, 1f);
+		spirit.color = Color.white;
 	}
 		
 	// Update is called once per frame
@@ -29,9 +29,8 @@ public class Resistor : MonoBehaviour {
 				spirit.color = Color.yellow;
 				selected = true;
 			} else {
-				Debug.Log ("Display error message");
+				UpdateFeedback.updateMessage ("Select only two components");
 			}
 		}
-		Debug.Log ("Selected component Count is: " + Components.getSelectedComponentCount().ToString());
 	}
 }

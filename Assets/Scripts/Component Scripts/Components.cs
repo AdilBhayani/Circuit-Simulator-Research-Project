@@ -16,7 +16,7 @@ public class Components : MonoBehaviour {
 	}
 
 	public static bool increaseSelected(){
-		if (selectedComponentCount <= 2) {
+		if (selectedComponentCount < 2) {
 			selectedComponentCount++;
 			return true;
 		}

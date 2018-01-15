@@ -20,11 +20,18 @@ public class Resistor : MonoBehaviour {
 
 	void OnMouseDown(){
 		if (selected) {
-			spirit.color = Color.white;
-			selected = false;
+			if (Components.decreaseSelected ()) {
+				spirit.color = Color.white;
+				selected = false;
+			}
 		} else {
-			spirit.color = Color.yellow;
-			selected = true;
+			if (Components.increaseSelected()) {
+				spirit.color = Color.yellow;
+				selected = true;
+			} else {
+				Debug.Log ("Display error message");
+			}
 		}
+		Debug.Log ("Selected component Count is: " + Components.getSelectedComponentCount().ToString());
 	}
 }

@@ -67,6 +67,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224359369243268490}
+  - component: {fileID: 114221622521605376}
   m_Layer: 0
   m_Name: Wire
   m_TagString: Wire
@@ -137,6 +138,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.06667, y: 0.25}
   m_EdgeRadius: 0
+--- !u!114 &114221622521605376
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1931374253403998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9eb151279d2e4204f9bb28db6b672dfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wire: {fileID: 1931374253403998}
+  wireSprite: {fileID: 1771013354439580}
 --- !u!212 &212105765770396476
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -15,21 +15,27 @@ public class Resistor : MonoBehaviour {
 		
 	// Update is called once per frame
 	void Update () {
-		
+		if (Components.getPaused ()) {
+			spirit.color = new Vector4 (spirit.color.r, spirit.color.g, spirit.color.b, 0.3f);
+		} else {
+			spirit.color = new Vector4 (spirit.color.r, spirit.color.g, spirit.color.b, 1f);
+		}
 	}
 
 	void OnMouseDown(){
-		if (selected) {
-			if (Components.decreaseSelected ()) {
-				spirit.color = Color.white;
-				selected = false;
-			}
-		} else {
-			if (Components.increaseSelected()) {
-				spirit.color = Color.yellow;
-				selected = true;
+		if (!Components.getPaused()) {
+			if (selected) {
+				if (Components.decreaseSelected ()) {
+					spirit.color = Color.white;
+					selected = false;
+				}
 			} else {
-				UpdateFeedback.updateMessage ("Select only two components");
+				if (Components.increaseSelected ()) {
+					spirit.color = Color.yellow;
+					selected = true;
+				} else {
+					UpdateFeedback.updateMessage ("Select only two components");
+				}
 			}
 		}
 	}

@@ -64,6 +64,7 @@ public class EscapeMenu : MonoBehaviour {
     /// </summary>
     public void DoQuit()
     {
+		Components.setPaused (true);
         Time.timeScale = 0;
         quitting = true;
         //reduce the visibility of normal UI, and disable all interraction
@@ -96,5 +97,6 @@ public class EscapeMenu : MonoBehaviour {
         confirmQuitCanvasGroup.alpha = 0;
         confirmQuitCanvasGroup.interactable = false;
         confirmQuitCanvasGroup.blocksRaycasts = false;
+		Components.setPaused (false);
     }
 }

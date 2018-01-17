@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class Components : MonoBehaviour {
 	private static int selectedComponentCount;
+	private static bool paused;
 
 	// Use this for initialization
 	void Start () {
 		selectedComponentCount = 0;
+		paused = false;
 	}
 	
 	// Update is called once per frame
@@ -33,5 +35,13 @@ public class Components : MonoBehaviour {
 
 	public static int getSelectedComponentCount(){
 		return selectedComponentCount;
+	}
+
+	public static void setPaused(bool newPaused){
+		paused = newPaused;
+	}
+
+	public static bool getPaused(){
+		return paused;
 	}
 }

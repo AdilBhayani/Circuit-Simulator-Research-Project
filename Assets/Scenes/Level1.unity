@@ -1975,6 +1975,7 @@ GameObject:
   - component: {fileID: 1114594246}
   - component: {fileID: 1114594248}
   - component: {fileID: 1114594247}
+  - component: {fileID: 1114594249}
   m_Layer: 5
   m_Name: LogLabel
   m_TagString: Untagged
@@ -2032,47 +2033,29 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 0.9
-  m_Text: '-Parallel Transform:
-
-    R(21) & R(7)
-
-    -Parallel Transform:
-
-    R(21) & R(7)
-
-    -Parallel Transform:
-
-    R(21) & R(7)
-
-    -Parallel Transform:
-
-    R(21) & R(7)
-
-    -Parallel Transform:
-
-    R(21) & R(7)
-
-    -Series Transform:
-
-    R(15) & R(10.5)
-
-    -Parallel Transform:
-
-    R(21) & R(7)
-
-    -Parallel Transform:
-
-    R(21) & R(7)
-
-    -Parallel Transform:
-
-    R(21) & R(7)'
+  m_Text: "-Parallel Transform:\r\nR(21) & R(7)\r\n-Parallel Transform:\r\nR(21) &
+    R(7)\r\n-Parallel Transform:\r\nR(21) & R(7)\r\n-Parallel Transform:\r\nR(21)
+    & R(7)\r\n-Parallel Transform:\r\nR(21) & R(7)\r\n-Series Transform:\r\nR(15)
+    & R(10.5)\r\n-Parallel Transform:\r\nR(21) & R(7)\r\n-Parallel Transform:\r\nR(21)
+    & R(7)\r\n-Parallel Transform:\r\nR(21) & R(7)"
 --- !u!222 &1114594248
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1114594245}
+--- !u!114 &1114594249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1114594245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a32e550898b5d934c9ba586ae5660e1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  historyPanel: {fileID: 1114594245}
 --- !u!1 &1116643616
 GameObject:
   m_ObjectHideFlags: 0

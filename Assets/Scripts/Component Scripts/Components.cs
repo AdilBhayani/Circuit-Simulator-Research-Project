@@ -124,6 +124,7 @@ public class Components : MonoBehaviour {
 					}
 				}
 			}
+			UpdateHistory.appendToHistory ("-Series Transform: \nR(10) & R(15)");
 		} else {
 			UpdateFeedback.updateMessage ("Select two components first");
 		}

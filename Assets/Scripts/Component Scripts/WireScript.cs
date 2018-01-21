@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Wire : MonoBehaviour {
+public class WireScript : MonoBehaviour {
 	public GameObject wire;
 	public GameObject wireSprite;
 	private SpriteRenderer spirit;
+	private string ID;
 
 	// Use this for initialization
 	void Start () {
@@ -20,5 +21,13 @@ public class Wire : MonoBehaviour {
 		} else {
 			spirit.color = new Vector4 (spirit.color.r, spirit.color.g, spirit.color.b, 1f);
 		}
+	}
+
+	public void setID(string newID){
+		ID = newID;
+	}
+
+	public string getID(){
+		return ID;
 	}
 }

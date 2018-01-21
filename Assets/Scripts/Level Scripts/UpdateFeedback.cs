@@ -13,7 +13,7 @@ public class UpdateFeedback : MonoBehaviour {
 	void Start () {
 		message = "Find the equivalent resistance";
 		messageUpdated = false;
-		timer = 3f;
+		timer = 5f;
 	}
 	
 	// Update is called once per frame

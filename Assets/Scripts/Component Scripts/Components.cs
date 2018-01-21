@@ -18,13 +18,13 @@ public class Components : MonoBehaviour {
 
 		createNode ("N1", 0.05f, 0.85f, true, false);
 		createWire ("W1", 0.05f, 0.5f, 0.85f, 0.85f, 4.5f, false);
-		createResistor("R1", 0.5f, 0.85f);
+		createResistor("R1", 0.5f, 0.85f, 10.0f);
 		createWire ("W2", 0.5f, 0.95f, 0.85f, 0.85f, 4.5f, false);
 		createNode ("N2", 0.95f, 0.85f, false, false);
 		createWire ("W3", 0.95f, 0.95f, 0.05f, 0.85f, 8.0f, true);
 		createNode ("N3", 0.95f, 0.05f, false, false);
 		createWire ("W4", 0.5f, 0.95f, 0.05f, 0.05f, 4.5f, false);
-		createResistor("R2", 0.5f, 0.05f);
+		createResistor("R2", 0.5f, 0.05f, 15.0f);
 		createWire ("W5", 0.05f, 0.5f, 0.05f, 0.05f, 4.5f, false);
 		createNode ("N4",0.05f,0.05f,false,true);
 
@@ -75,10 +75,11 @@ public class Components : MonoBehaviour {
 		}
 	}
 
-	private void createResistor(string ID, float anchorX, float anchorY){
+	private void createResistor(string ID, float anchorX, float anchorY, float value){
 		GameObject newResistor = (GameObject)Instantiate (Resistor, new Vector3 (0, 0, 0), Quaternion.identity);
 		newResistor = setPosition(newResistor, ID, anchorX, anchorX, anchorY, anchorY);
 		newResistor.GetComponent<ResistorScript> ().setID (ID);
+		newResistor.GetComponent<ResistorScript> ().setValue (value);
 	}
 
 	private void createWire(string ID, float xStart, float xEnd, float yStart, float yEnd, float scale, bool vertical){

@@ -1,20 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ResistorScript : MonoBehaviour {
 	public GameObject resistor;
-	public GameObject text;
+	public GameObject textObject;
 	private SpriteRenderer spirit;
 	private bool selected = false;
 	private string ID;
 	private string IDLeft;
 	private string IDRight;
+	private float value;
 
 	// Use this for initialization
 	void Start () {
 		spirit = resistor.GetComponent<SpriteRenderer> ();
 		spirit.color = Color.white;
+		value = 0;
 	}
 		
 	// Update is called once per frame
@@ -66,6 +69,15 @@ public class ResistorScript : MonoBehaviour {
 
 	public string getIDLeft(){
 		return IDLeft;
+	}
+
+	public void setValue(float value){
+		this.value = value;
+		textObject.GetComponent<Text> ().text = value.ToString();
+	}
+
+	public float getValue(){
+		return value;
 	}
 
 }

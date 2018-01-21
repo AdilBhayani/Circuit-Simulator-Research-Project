@@ -10,23 +10,25 @@ public class Components : MonoBehaviour {
 	public Transform circuitPanel;
 	private static int selectedComponentCount;
 	private static bool paused;
+	private List <GameObject> componentsList;
 
 	// Use this for initialization
 	void Start () {
 		selectedComponentCount = 0;
 		paused = false;
+		componentsList = new List <GameObject> ();
 
-		createNode ("N1", 0.05f, 0.85f, true, false);
+		createNode ("N1", 0.05f, 0.85f, true, false, null, "R1", null, null);
 		createWire ("W1", 0.05f, 0.5f, 0.85f, 0.85f, 4.5f, false);
 		createResistor("R1", 0.5f, 0.85f, 10.0f);
 		createWire ("W2", 0.5f, 0.95f, 0.85f, 0.85f, 4.5f, false);
-		createNode ("N2", 0.95f, 0.85f, false, false);
+		createNode ("N2", 0.95f, 0.85f, false, false, null, null, "N3", "R1");
 		createWire ("W3", 0.95f, 0.95f, 0.05f, 0.85f, 8.0f, true);
-		createNode ("N3", 0.95f, 0.05f, false, false);
+		createNode ("N3", 0.95f, 0.05f, false, false, "N3", null, null, "R2");
 		createWire ("W4", 0.5f, 0.95f, 0.05f, 0.05f, 4.5f, false);
 		createResistor("R2", 0.5f, 0.05f, 15.0f);
 		createWire ("W5", 0.05f, 0.5f, 0.05f, 0.05f, 4.5f, false);
-		createNode ("N4",0.05f,0.05f,false,true);
+		createNode ("N4",0.05f,0.05f,false,true, null, "R2", null, null);
 
 	}
 
@@ -63,7 +65,7 @@ public class Components : MonoBehaviour {
 		return paused;
 	}
 
-	private void createNode(string ID, float anchorX, float anchorY, bool first, bool last){
+	private void createNode(string ID, float anchorX, float anchorY, bool first, bool last, string connectionTop, string connectionRight, string connectionDown, string connectionLeft){
 		GameObject newNode = (GameObject)Instantiate (Node, new Vector3 (0, 0, 0), Quaternion.identity);
 		newNode = setPosition (newNode, ID, anchorX, anchorX, anchorY, anchorY);
 		newNode.GetComponent<NodeScript> ().setID (ID);
@@ -73,6 +75,7 @@ public class Components : MonoBehaviour {
 		} else if (last) {
 			newNode.tag = "lastNode";
 		}
+		componentsList.Add (newNode);
 	}
 
 	private void createResistor(string ID, float anchorX, float anchorY, float value){
@@ -80,6 +83,7 @@ public class Components : MonoBehaviour {
 		newResistor = setPosition(newResistor, ID, anchorX, anchorX, anchorY, anchorY);
 		newResistor.GetComponent<ResistorScript> ().setID (ID);
 		newResistor.GetComponent<ResistorScript> ().setValue (value);
+		componentsList.Add (newResistor);
 	}
 
 	private void createWire(string ID, float xStart, float xEnd, float yStart, float yEnd, float scale, bool vertical){
@@ -98,6 +102,7 @@ public class Components : MonoBehaviour {
 		}
 		newWire.GetComponent<RectTransform> ().localScale = temp;
 		newWire.GetComponent<WireScript> ().setID (ID);
+		componentsList.Add (newWire);
 	}
 
 	private GameObject setPosition(GameObject newObject, string ID, float anchorXMin, float anchorXMax, float anchorYMin, float anchorYMax){
@@ -105,5 +110,30 @@ public class Components : MonoBehaviour {
 		newObject.GetComponent<RectTransform> ().anchorMin = new Vector2 (anchorXMin, anchorYMin);
 		newObject.GetComponent<RectTransform> ().anchorMax = new Vector2 (anchorXMax, anchorYMax);
 		return newObject;
+	}
+
+	public void checkTransformSeries(){
+		if (selectedComponentCount == 2) {
+			foreach (GameObject componentObject in componentsList) {
+				if (componentObject.GetComponents<ResistorScript> ().Length != 0) {
+					if (componentObject.GetComponent<ResistorScript> ().getID () == "R2") {
+						Destroy (componentObject);
+					}
+					if (componentObject.GetComponent<ResistorScript> ().getID () == "R1") {
+						componentObject.GetComponent<ResistorScript> ().setValue (25.0f);
+					}
+				}
+			}
+		} else {
+			UpdateFeedback.updateMessage ("Select two components first");
+		}
+	}
+
+	public void checkTransformParallel(){
+		if (selectedComponentCount == 2) {
+			UpdateFeedback.updateMessage ("Components are not in parallel");
+		} else {
+			UpdateFeedback.updateMessage ("Select two components first");
+		}
 	}
 }

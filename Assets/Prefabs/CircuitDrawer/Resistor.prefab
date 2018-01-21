@@ -83,7 +83,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resistor: {fileID: 1231107963815144}
-  text: {fileID: 1859874077643354}
+  textObject: {fileID: 1859874077643354}
 --- !u!114 &114670398581938410
 MonoBehaviour:
   m_ObjectHideFlags: 1

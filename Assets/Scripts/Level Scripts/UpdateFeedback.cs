@@ -13,7 +13,7 @@ public class UpdateFeedback : MonoBehaviour {
 	void Start () {
 		message = "Find the equivalent resistance";
 		messageUpdated = false;
-		timer = 5f;
+		resetTimer ();
 	}
 	
 	// Update is called once per frame
@@ -23,7 +23,6 @@ public class UpdateFeedback : MonoBehaviour {
 		}
 		if (timer <= 0) {
 			message = "";
-			timer = 3f;
 			updateUiMessage ();
 		}
 		if (messageUpdated) {
@@ -34,10 +33,15 @@ public class UpdateFeedback : MonoBehaviour {
 
 	private void updateUiMessage(){
 		textObject.text = message;
+		resetTimer ();
 	}
 
 	public static void updateMessage(string newMessage){
 		message = newMessage;
 		messageUpdated = true;
+	}
+
+	private void resetTimer(){
+		timer = 5f;
 	}
 }

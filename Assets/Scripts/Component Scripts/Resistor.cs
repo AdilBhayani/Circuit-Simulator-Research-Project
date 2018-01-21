@@ -39,4 +39,9 @@ public class Resistor : MonoBehaviour {
 			}
 		}
 	}
+
+	void onCollisionEnter2D(Collision2D col){
+		Debug.Log ("Object is: " + col.gameObject.name);
+		spirit.color = Color.blue;
+	}
 }

@@ -34,11 +34,29 @@ public class Components : MonoBehaviour {
 		createWire ("W5", 0.05f, 0.5f, 0.05f, 0.05f, 4.5f, false);
 		createNode ("N4",0.05f,0.05f,false,true, null, "R2", null, null);
 		
-		// Possible because Resistor extends the abstract class Parameterized<Resistor> which in turn implements IParameterized
-		Resistor res = new Resistor("R1");
-		res.Set("resistance", 500);
-		double resistance =  res.Ask("resistance");
-		Debug.Log (resistance);
+		// Build the circuit
+		Circuit ckt = new Circuit();
+		Diode d = new Diode("D1");
+		d.Connect("OUT", "GND");
+		d.SetModel(new DiodeModel("DiodeModel"));
+		ckt.Objects.Add(
+			new Voltagesource("V1", "IN", "GND", 0.0),
+			new Resistor("R1", "IN", "OUT", 1e3),
+			d
+		);
+
+		// Simulation
+		DC dc = new DC("DC 1");
+		dc.Sweeps.Add(new DC.Sweep("V1", -5.0, 5.0, 10e-3));
+		dc.OnExportSimulationData += (object sender, SimulationData data) =>
+			{
+				double sweepvalue = dc.Sweeps[0].CurrentValue;
+				double output = data.GetVoltage("OUT");
+				if(sweepvalue % 0.2 == 0){
+					Debug.Log("Sweepvalue is: " + sweepvalue + "Output is: " + output);
+				}
+			};
+		ckt.Simulate(dc);
 	}
 
 	// Update is called once per frame

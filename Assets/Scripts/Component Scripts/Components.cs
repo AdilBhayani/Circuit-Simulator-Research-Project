@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SpiceSharp;
+using SpiceSharp.Components;
+using SpiceSharp.Simulations;
 
 public class Components : MonoBehaviour {
 	public GameObject Node;
@@ -11,6 +14,7 @@ public class Components : MonoBehaviour {
 	private static int selectedComponentCount;
 	private static bool paused;
 	private List <GameObject> componentsList;
+	private Circuit ckt;
 
 	// Use this for initialization
 	void Start () {
@@ -29,7 +33,12 @@ public class Components : MonoBehaviour {
 		createResistor("R2", 0.5f, 0.05f, 15.0f);
 		createWire ("W5", 0.05f, 0.5f, 0.05f, 0.05f, 4.5f, false);
 		createNode ("N4",0.05f,0.05f,false,true, null, "R2", null, null);
-
+		
+		// Possible because Resistor extends the abstract class Parameterized<Resistor> which in turn implements IParameterized
+		Resistor res = new Resistor("R1");
+		res.Set("resistance", 500);
+		double resistance =  res.Ask("resistance");
+		Debug.Log (resistance);
 	}
 
 	// Update is called once per frame

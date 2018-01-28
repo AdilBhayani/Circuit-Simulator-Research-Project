@@ -36,25 +36,28 @@ public class Components : MonoBehaviour {
 		
 		// Build the circuit
 		Circuit ckt = new Circuit();
-		Diode d = new Diode("D1");
-		d.Connect("OUT", "GND");
-		d.SetModel(new DiodeModel("DiodeModel"));
+		Resistor r1;
 		ckt.Objects.Add(
-			new Voltagesource("V1", "IN", "GND", 0.0),
-			new Resistor("R1", "IN", "OUT", 1e3),
-			d
-		);
+			new Voltagesource("V1", "1", "GND", 1.0),
+			r1 = new Resistor("R1", "1", "2", 1e3),
+			new Resistor("R2", "2", "GND", 1e3),
+			new Resistor("R3", "2", "GND", 1e3)
+			);
 
 		// Simulation
-		DC dc = new DC("DC 1");
-		dc.Sweeps.Add(new DC.Sweep("V1", -5.0, 5.0, 10e-3));
+		DC dc = new DC("Dc 1");
+		dc.Sweeps.Add(new DC.Sweep("V1", 0, 1, 1));
 		dc.OnExportSimulationData += (object sender, SimulationData data) =>
 			{
-				double sweepvalue = dc.Sweeps[0].CurrentValue;
-				double output = data.GetVoltage("OUT");
-				if(sweepvalue % 0.2 == 0){
-					Debug.Log("Sweepvalue is: " + sweepvalue + "Output is: " + output);
-				}
+			if (dc.Sweeps[0].CurrentValue == 1){
+				double vr1 = data.GetVoltage("1") - data.GetVoltage("2");
+				double vr2 = data.GetVoltage("2") - data.GetVoltage("GND");
+				double vr3 = data.GetVoltage("2") - data.GetVoltage("GND");
+				Debug.Log(r1.GetCurrent(ckt));
+				Debug.Log("Vr1 is: " + vr1);
+				Debug.Log("Vr2 is: " + vr2);
+				Debug.Log("Vr3 is: " + vr3);
+			}
 			};
 		ckt.Simulate(dc);
 	}

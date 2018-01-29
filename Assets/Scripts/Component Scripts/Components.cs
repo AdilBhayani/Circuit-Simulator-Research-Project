@@ -4,6 +4,7 @@ using UnityEngine;
 using SpiceSharp;
 using SpiceSharp.Components;
 using SpiceSharp.Simulations;
+using System.IO;
 
 public class Components : MonoBehaviour {
 	public GameObject Node;
@@ -15,56 +16,20 @@ public class Components : MonoBehaviour {
 	private static bool paused;
 	private List <GameObject> componentsList;
 	private Circuit ckt;
+	private Resistor r1;
 
 	// Use this for initialization
 	void Start () {
 		selectedComponentCount = 0;
 		paused = false;
 		componentsList = new List <GameObject> ();
+		LoadCircuit ();
 
-		createNode ("N1", 0.05f, 0.85f, true, false, null, "R1", null, null);
-		createWire ("W1", 0.05f, 0.5f, 0.85f, 0.85f, 4.5f, false);
-		createResistor("R1", 0.5f, 0.85f, 10.0f);
-		createWire ("W2", 0.5f, 0.95f, 0.85f, 0.85f, 4.5f, false);
-		createNode ("N2", 0.95f, 0.85f, false, false, null, null, "N3", "R1");
-		createWire ("W3", 0.95f, 0.95f, 0.05f, 0.85f, 8.0f, true);
-		createNode ("N3", 0.95f, 0.05f, false, false, "N3", null, null, "R2");
-		createWire ("W4", 0.5f, 0.95f, 0.05f, 0.05f, 4.5f, false);
-		createResistor("R2", 0.5f, 0.05f, 15.0f);
-		createWire ("W5", 0.05f, 0.5f, 0.05f, 0.05f, 4.5f, false);
-		createNode ("N4",0.05f,0.05f,false,true, null, "R2", null, null);
-		
-		// Build the circuit
-		Circuit ckt = new Circuit();
-		Resistor r1;
-		ckt.Objects.Add(
-			new Voltagesource("V1", "1", "GND", 1.0),
-			r1 = new Resistor("R1", "1", "2", 1e3),
-			new Resistor("R2", "2", "GND", 1e3),
-			new Resistor("R3", "2", "GND", 1e3)
-			);
 
-		// Simulation
-		DC dc = new DC("Dc 1");
-		dc.Sweeps.Add(new DC.Sweep("V1", 0, 1, 1));
-		dc.OnExportSimulationData += (object sender, SimulationData data) =>
-			{
-			if (dc.Sweeps[0].CurrentValue == 1){
-				double vr1 = data.GetVoltage("1") - data.GetVoltage("2");
-				double vr2 = data.GetVoltage("2") - data.GetVoltage("GND");
-				double vr3 = data.GetVoltage("2") - data.GetVoltage("GND");
-				Debug.Log(r1.GetCurrent(ckt));
-				Debug.Log("Vr1 is: " + vr1);
-				Debug.Log("Vr2 is: " + vr2);
-				Debug.Log("Vr3 is: " + vr3);
-			}
-			};
-		ckt.Simulate(dc);
 	}
 
 	// Update is called once per frame
 	void Update () {
-		
 	}
 
 	public static bool increaseSelected(){
@@ -166,5 +131,34 @@ public class Components : MonoBehaviour {
 		} else {
 			UpdateFeedback.updateMessage ("Select two components first");
 		}
+	}
+
+	private void LoadCircuit(){
+		StreamReader reader = CircuitLoader.ReadString ();
+		string circuitLine = reader.ReadLine ();
+		int count = 65;
+		Dictionary<string,string[]> lineDictionary = new Dictionary<string,string[]>();
+
+		while (circuitLine != null) {
+			if (circuitLine.StartsWith("//")){
+				circuitLine = reader.ReadLine ();
+			}else{
+				Debug.Log (circuitLine);
+				char letterChar = (char)count;
+				string letter = letterChar.ToString ();
+				count++;
+				string[] circuitLineArray = circuitLine.Split (',');
+				lineDictionary.Add(letter, circuitLineArray);
+				circuitLine = reader.ReadLine ();
+			}
+		}
+		Debug.Log ("Here");
+		string printString = "";
+		foreach (KeyValuePair<string, string[]> kvp in lineDictionary){
+			//string arrayValue = string.Join (".", kvp.Value);
+			printString += string.Format ("Key = {0}, Value = {1}", kvp.Key, string.Join(".", kvp.Value));
+			printString += "\n";
+		}
+		Debug.Log (printString);
 	}
 }

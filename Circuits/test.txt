@@ -1,5 +1,5 @@
 //Key: N=Node, Wh= Wire horizontal, Rh10 = Resistor horizontal 10 ohms, Wv = Wire vertical, x = blank
-N,Wh,Wh,Wh,Rh10,Wh,Wh,Wh,Wh,N
+N,Wh,Wh,Wh,Rh12,Wh,Wh,Wh,Wh,N
 x,x,x,x,x,x,x,x,x,Wv
 x,x,x,x,x,x,x,x,x,Wv
 x,x,x,x,x,x,x,x,x,Wv

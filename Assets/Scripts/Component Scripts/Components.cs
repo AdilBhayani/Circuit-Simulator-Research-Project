@@ -17,15 +17,51 @@ public class Components : MonoBehaviour {
 	private List <GameObject> componentsList;
 	private Circuit ckt;
 	private Resistor r1;
+	Dictionary<string,string[]> lineDictionary = new Dictionary<string,string[]>();
+	private int verticalGridSize = 5;
+	private int horizontalGridSize = 9;
+	private int numberOfNodes = 0;
+	private int numberOfResistors = 0;
+	private int numberOfWires = 0;
+	private bool[,] rendered;
 
 	// Use this for initialization
 	void Start () {
+		rendered = new bool[verticalGridSize,horizontalGridSize];
 		selectedComponentCount = 0;
 		paused = false;
 		componentsList = new List <GameObject> ();
 		LoadCircuit ();
+		RenderCircuit ();
 
+		/*
+		// Build the circuit
+		Circuit ckt = new Circuit();
+		Resistor r1;
+		ckt.Objects.Add(
+			new Voltagesource("V1", "1", "GND", 1.0),
+			r1 = new Resistor("R1", "1", "2", 1e3),
+			new Resistor("R2", "2", "GND", 1e3),
+			new Resistor("R3", "2", "GND", 1e3)
+		);
 
+		// Simulation
+		DC dc = new DC("Dc 1");
+		dc.Sweeps.Add(new DC.Sweep("V1", 0, 1, 1));
+		dc.OnExportSimulationData += (object sender, SimulationData data) =>
+		{
+			if (dc.Sweeps[0].CurrentValue == 1){
+				double vr1 = data.GetVoltage("1") - data.GetVoltage("2");
+				double vr2 = data.GetVoltage("2") - data.GetVoltage("GND");
+				double vr3 = data.GetVoltage("2") - data.GetVoltage("GND");
+				Debug.Log(r1.GetCurrent(ckt));
+				Debug.Log("Vr1 is: " + vr1);
+				Debug.Log("Vr2 is: " + vr2);
+				Debug.Log("Vr3 is: " + vr3);
+			}
+		};
+		ckt.Simulate(dc);
+		*/
 	}
 
 	// Update is called once per frame
@@ -111,10 +147,10 @@ public class Components : MonoBehaviour {
 		if (selectedComponentCount == 2) {
 			foreach (GameObject componentObject in componentsList) {
 				if (componentObject.GetComponents<ResistorScript> ().Length != 0) {
-					if (componentObject.GetComponent<ResistorScript> ().getID () == "R2") {
+					if (componentObject.GetComponent<ResistorScript> ().getID () == "R1") {
 						Destroy (componentObject);
 					}
-					if (componentObject.GetComponent<ResistorScript> ().getID () == "R1") {
+					if (componentObject.GetComponent<ResistorScript> ().getID () == "R0") {
 						componentObject.GetComponent<ResistorScript> ().setValue (25.0f);
 					}
 				}
@@ -137,8 +173,6 @@ public class Components : MonoBehaviour {
 		StreamReader reader = CircuitLoader.ReadString ();
 		string circuitLine = reader.ReadLine ();
 		int count = 65;
-		Dictionary<string,string[]> lineDictionary = new Dictionary<string,string[]>();
-
 		while (circuitLine != null) {
 			if (circuitLine.StartsWith("//")){
 				circuitLine = reader.ReadLine ();
@@ -152,13 +186,95 @@ public class Components : MonoBehaviour {
 				circuitLine = reader.ReadLine ();
 			}
 		}
-		Debug.Log ("Here");
-		string printString = "";
+		reader.Close ();
+	}
+
+	private void RenderCircuit(){
+		Debug.Log ("Render Circuit");
 		foreach (KeyValuePair<string, string[]> kvp in lineDictionary){
-			//string arrayValue = string.Join (".", kvp.Value);
-			printString += string.Format ("Key = {0}, Value = {1}", kvp.Key, string.Join(".", kvp.Value));
-			printString += "\n";
+			switch (kvp.Key) {
+			case "A":
+				Debug.Log ("Its A");
+				drawCircuit (kvp, 0.85f,0);
+				break;
+			case "B":
+				Debug.Log ("Its B");
+				drawCircuit (kvp, 0.85f - 0.8f / (verticalGridSize - 1),1);
+				break;
+			case "C":
+				Debug.Log ("Its C");
+				drawCircuit (kvp, 0.85f - 0.8f * 2 / (verticalGridSize - 1),2);
+				break;
+			case "D":
+				Debug.Log ("Its D");
+				drawCircuit (kvp, 0.85f - 0.8f * 3 / (verticalGridSize - 1),3);
+				break;
+			case "E":
+				Debug.Log ("Its E");
+				drawCircuit (kvp, 0.85f - 0.8f * 4 / (verticalGridSize - 1),4);
+				break;
+			}
 		}
-		Debug.Log (printString);
+	}
+
+	private void drawCircuit(KeyValuePair<string, string[]> kvp, float verticalHeight, int row){
+		string[] lineComponents = kvp.Value;
+		for(int x = 0; x < lineComponents.Length; x++){
+			switch (lineComponents [x]) {
+			case "x":
+				rendered [row, x] = true;
+				break;
+			case "N":
+				bool firstNode = false;
+				bool lastNode = false;
+				if (x == 0 && kvp.Key == "A") {
+					firstNode = true;
+				}
+				if (x == 0 && kvp.Key == "E") {
+					lastNode = true;
+				}
+				createNode ("N" + numberOfNodes.ToString (), x * 0.9f / horizontalGridSize + 0.05f, verticalHeight, firstNode, lastNode, null, null, null, null);
+				numberOfNodes++;
+				//rendered [row, x] = true;
+				break;
+			case "Wh":
+				if (rendered [row, x] == false) {
+					int newX = x + 1;
+					while (lineComponents [newX] == "Wh") {
+						//rendered [row, newX] = true;
+						newX++;
+					}
+					Debug.Log ("x is: " + x);
+					Debug.Log ("newX is: " + newX);
+					float minX = x * 0.9f / horizontalGridSize - 0.05f;
+					float maxX = newX * 0.9f / horizontalGridSize + 0.05f;
+					Debug.Log ("minX is: " + minX);
+					Debug.Log ("maxX is: " + maxX);
+					createWire ("W" + numberOfWires.ToString (), minX, maxX, verticalHeight, verticalHeight, (maxX - minX) * 10f, false);
+					numberOfWires++;
+					rendered [row, x] = true;
+				}
+				break;
+			default:
+				if (lineComponents[x].StartsWith("Rh") || lineComponents[x].StartsWith("Rv") ){
+					string resistanceString = lineComponents [x].Substring (2);
+					float resistance = float.Parse(resistanceString, System.Globalization.CultureInfo.InvariantCulture);
+					Debug.Log (resistance.ToString());	
+					createResistor ("R" + numberOfResistors.ToString (), x * 0.9f / horizontalGridSize + 0.05f, verticalHeight,resistance);
+					numberOfResistors++;
+				}
+				break;
+			}
+		}
 	}
 }
+
+/*		
+ Debug.Log ("Here");
+string printString = "";
+foreach (KeyValuePair<string, string[]> kvp in lineDictionary){
+	printString += string.Format ("Key = {0}, Value = {1}", kvp.Key, string.Join(".", kvp.Value));
+	printString += "\n";
+}
+Debug.Log (printString);
+*/

@@ -225,6 +225,7 @@ public class Components : MonoBehaviour {
 				rendered [row, x] = true;
 				break;
 			case "N":
+				Debug.Log ("Rendering Node");
 				bool firstNode = false;
 				bool lastNode = false;
 				if (x == 0 && kvp.Key == "A") {
@@ -235,27 +236,51 @@ public class Components : MonoBehaviour {
 				}
 				createNode ("N" + numberOfNodes.ToString (), x * 0.9f / horizontalGridSize + 0.05f, verticalHeight, firstNode, lastNode, null, null, null, null);
 				numberOfNodes++;
-				//rendered [row, x] = true;
+				rendered [row, x] = true;
 				break;
 			case "Wh":
 				if (rendered [row, x] == false) {
+					Debug.Log ("Rendering horizontal wire");
 					int newX = x + 1;
 					while (lineComponents [newX] == "Wh") {
-						//rendered [row, newX] = true;
+						rendered [row, newX] = true;
 						newX++;
 					}
-					Debug.Log ("x is: " + x);
-					Debug.Log ("newX is: " + newX);
 					float minX = x * 0.9f / horizontalGridSize - 0.05f;
 					float maxX = newX * 0.9f / horizontalGridSize + 0.05f;
-					Debug.Log ("minX is: " + minX);
-					Debug.Log ("maxX is: " + maxX);
 					createWire ("W" + numberOfWires.ToString (), minX, maxX, verticalHeight, verticalHeight, (maxX - minX) * 10f, false);
 					numberOfWires++;
 					rendered [row, x] = true;
 				}
 				break;
+			case "Wv":
+				if (rendered [row, x] == false) {
+					Debug.Log ("Rendering vertical wire");
+					int newRow = row + 1;
+					char letterCharacter = (char)(newRow + 65);
+					string letterString = letterCharacter.ToString ();
+					string[] newLineComponents = lineDictionary [letterString];
+					while (newLineComponents [x] == "Wv") {
+						rendered [newRow, x] = true;
+						char letterChar = (char)(newRow + 65);
+						string letter = letterChar.ToString ();
+						newRow++;
+						newLineComponents = lineDictionary [letter];
+					}
+					newRow = newRow;
+					float minX = x * 0.9f / horizontalGridSize + 0.05f;
+					float maxY = verticalHeight + 1.0f / verticalGridSize;
+					Debug.Log ("NewRow is: " + newRow);
+					float minY = (verticalGridSize - newRow - 1) * 0.2f + 0.05f;
+					Debug.Log ("maxY is: " + maxY);
+					Debug.Log ("minY is: " + minY);
+					createWire ("W" + numberOfWires.ToString (), minX, minX, minY, maxY, (maxY - minY) * 10f, true);
+					numberOfWires++;
+					rendered [row, x] = true;
+				}
+				break;
 			default:
+				Debug.Log ("Rendering Resistor");
 				if (lineComponents[x].StartsWith("Rh") || lineComponents[x].StartsWith("Rv") ){
 					string resistanceString = lineComponents [x].Substring (2);
 					float resistance = float.Parse(resistanceString, System.Globalization.CultureInfo.InvariantCulture);

@@ -15,25 +15,6 @@ public class CircuitLoader : MonoBehaviour {
 		
 	}
 
-/*	[MenuItem("Tools/Write file")]
-	static void WriteString()
-	{
-		string path = "Circuits/test.txt";
-
-		//Write some text to the test.txt file
-		StreamWriter writer = new StreamWriter(path, true);
-		writer.WriteLine("Test");
-		writer.Close();
-
-		//Re-import the file to update the reference in the editor
-		AssetDatabase.ImportAsset(path); 
-		TextAsset asset = Resources.Load("test.txt");
-
-		//Print the text from the file
-		Debug.Log(asset.text);
-	}
-	*/
-
 	public static StreamReader ReadString()
 	{
 		string path = "Circuits/test.txt";

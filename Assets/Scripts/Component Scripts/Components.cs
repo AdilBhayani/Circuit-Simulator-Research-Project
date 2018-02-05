@@ -5,6 +5,7 @@ using SpiceSharp;
 using SpiceSharp.Components;
 using SpiceSharp.Simulations;
 using System.IO;
+using System;
 
 public class Components : MonoBehaviour {
 	public GameObject Node;
@@ -17,6 +18,8 @@ public class Components : MonoBehaviour {
 	private List <GameObject> componentsList;
 	private Circuit ckt;
 	private Resistor r1;
+	private Resistor r2;
+	private Resistor r3;
 	Dictionary<string,string[]> lineDictionary = new Dictionary<string,string[]>();
 	private int verticalGridSize = 5;
 	private int horizontalGridSize = 9;
@@ -24,6 +27,7 @@ public class Components : MonoBehaviour {
 	private int numberOfResistors = 0;
 	private int numberOfWires = 0;
 	private bool[,] rendered;
+	private float wireResistance = 0.000000000001f;
 
 	// Use this for initialization
 	void Start () {
@@ -34,15 +38,19 @@ public class Components : MonoBehaviour {
 		LoadCircuit ();
 		RenderCircuit ();
 
-		/*
+
 		// Build the circuit
 		Circuit ckt = new Circuit();
-		Resistor r1;
-		ckt.Objects.Add(
-			new Voltagesource("V1", "1", "GND", 1.0),
-			r1 = new Resistor("R1", "1", "2", 1e3),
-			new Resistor("R2", "2", "GND", 1e3),
-			new Resistor("R3", "2", "GND", 1e3)
+		ckt.Objects.Add( 
+			new Voltagesource("V1", "A0", "GND", 1.0),
+			r1 = new Resistor("R1", "A0", "A8", 12),
+			new Resistor("Vx1", "A8", "C8", wireResistance),
+			r2 = new Resistor("R2", "C2", "C8", 16),
+			new Resistor("Vx2", "C8", "E8", wireResistance),
+			new Resistor("Vx3", "C2", "E2", wireResistance),
+			r3 = new Resistor("R3", "E2", "E8", 15),
+			new Resistor ("Vx4", "E0","E2", wireResistance),
+			new Resistor ("Vx5", "E0", "GND", wireResistance)
 		);
 
 		// Simulation
@@ -51,17 +59,16 @@ public class Components : MonoBehaviour {
 		dc.OnExportSimulationData += (object sender, SimulationData data) =>
 		{
 			if (dc.Sweeps[0].CurrentValue == 1){
-				double vr1 = data.GetVoltage("1") - data.GetVoltage("2");
-				double vr2 = data.GetVoltage("2") - data.GetVoltage("GND");
-				double vr3 = data.GetVoltage("2") - data.GetVoltage("GND");
-				Debug.Log(r1.GetCurrent(ckt));
+				double vr1 = Math.Abs(data.GetVoltage("A0") - data.GetVoltage("A8"));
+				double vr2 = Math.Abs(data.GetVoltage("C2") - data.GetVoltage("C8"));
+				double vr3 = Math.Abs(data.GetVoltage("E2") - data.GetVoltage("E8"));
+				//Debug.Log(r1.GetCurrent(ckt));
 				Debug.Log("Vr1 is: " + vr1);
 				Debug.Log("Vr2 is: " + vr2);
 				Debug.Log("Vr3 is: " + vr3);
 			}
 		};
 		ckt.Simulate(dc);
-		*/
 	}
 
 	// Update is called once per frame
@@ -149,13 +156,14 @@ public class Components : MonoBehaviour {
 				if (componentObject.GetComponents<ResistorScript> ().Length != 0) {
 					if (componentObject.GetComponent<ResistorScript> ().getID () == "R1") {
 						Destroy (componentObject);
+						selectedComponentCount = 0;
 					}
 					if (componentObject.GetComponent<ResistorScript> ().getID () == "R0") {
 						componentObject.GetComponent<ResistorScript> ().setValue (25.0f);
 					}
 				}
 			}
-			UpdateHistory.appendToHistory ("-Series Transform: \nR(10) & R(15)");
+			UpdateHistory.appendToHistory ("Series Transform: \nR(10) & R(15)");
 		} else {
 			UpdateFeedback.updateMessage ("Select two components first");
 		}

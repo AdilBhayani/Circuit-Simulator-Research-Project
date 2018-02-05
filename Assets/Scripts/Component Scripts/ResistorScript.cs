@@ -27,6 +27,10 @@ public class ResistorScript : MonoBehaviour {
 		} else {
 			spirit.color = new Vector4 (spirit.color.r, spirit.color.g, spirit.color.b, 1f);
 		}
+		if (Components.getSelectedComponentCount() == 0){
+			spirit.color = Color.white;
+			selected = false;
+		}
 	}
 
 	void OnMouseDown(){

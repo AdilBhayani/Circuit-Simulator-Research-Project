@@ -38,37 +38,8 @@ public class Components : MonoBehaviour {
 		LoadCircuit ();
 		RenderCircuit ();
 
-
-		// Build the circuit
-		Circuit ckt = new Circuit();
-		ckt.Objects.Add( 
-			new Voltagesource("V1", "A0", "GND", 1.0),
-			r1 = new Resistor("R1", "A0", "A8", 12),
-			new Resistor("Vx1", "A8", "C8", wireResistance),
-			r2 = new Resistor("R2", "C2", "C8", 16),
-			new Resistor("Vx2", "C8", "E8", wireResistance),
-			new Resistor("Vx3", "C2", "E2", wireResistance),
-			r3 = new Resistor("R3", "E2", "E8", 15),
-			new Resistor ("Vx4", "E0","E2", wireResistance),
-			new Resistor ("Vx5", "E0", "GND", wireResistance)
-		);
-
-		// Simulation
-		DC dc = new DC("Dc 1");
-		dc.Sweeps.Add(new DC.Sweep("V1", 0, 1, 1));
-		dc.OnExportSimulationData += (object sender, SimulationData data) =>
-		{
-			if (dc.Sweeps[0].CurrentValue == 1){
-				double vr1 = Math.Abs(data.GetVoltage("A0") - data.GetVoltage("A8"));
-				double vr2 = Math.Abs(data.GetVoltage("C2") - data.GetVoltage("C8"));
-				double vr3 = Math.Abs(data.GetVoltage("E2") - data.GetVoltage("E8"));
-				//Debug.Log(r1.GetCurrent(ckt));
-				Debug.Log("Vr1 is: " + vr1);
-				Debug.Log("Vr2 is: " + vr2);
-				Debug.Log("Vr3 is: " + vr3);
-			}
-		};
-		ckt.Simulate(dc);
+		BuildCircuit ();
+		SimulateCircuit ();
 	}
 
 	// Update is called once per frame
@@ -300,9 +271,44 @@ public class Components : MonoBehaviour {
 			}
 		}
 	}
+
+	private void SimulateCircuit(){
+		// Simulation
+		DC dc = new DC("Dc 1");
+		dc.Sweeps.Add(new DC.Sweep("V1", 0, 1, 1));
+		dc.OnExportSimulationData += (object sender, SimulationData data) =>
+		{
+			if (dc.Sweeps[0].CurrentValue == 1){
+				double vr1 = Math.Abs(data.GetVoltage(r1.GetNode(0)) - data.GetVoltage(r1.GetNode(1)));
+				double vr2 = Math.Abs(data.GetVoltage(r2.GetNode(0)) - data.GetVoltage(r2.GetNode(1)));
+				double vr3 = Math.Abs(data.GetVoltage(r3.GetNode(0)) - data.GetVoltage(r3.GetNode(1)));
+				//Debug.Log(r1.GetCurrent(ckt));
+				Debug.Log("Vr1 is: " + vr1);
+				Debug.Log("Vr2 is: " + vr2);
+				Debug.Log("Vr3 is: " + vr3);
+			}
+		};
+		ckt.Simulate(dc);
+	}
+
+	private void BuildCircuit(){
+		// Build the circuit
+		ckt = new Circuit();
+		ckt.Objects.Add( 
+			new Voltagesource("V1", "A0", "GND", 1.0),
+			r1 = new Resistor("R1", "A0", "A8", 12),
+			new Resistor("Vx1", "A8", "C8", wireResistance),
+			r2 = new Resistor("R2", "C2", "C8", 16),
+			new Resistor("Vx2", "C8", "E8", wireResistance),
+			new Resistor("Vx3", "C2", "E2", wireResistance),
+			r3 = new Resistor("R3", "E2", "E8", 15),
+			new Resistor ("Vx4", "E0","E2", wireResistance),
+			new Resistor ("Vx5", "E0", "GND", wireResistance)
+		);
+	}
 }
 
-/*		
+/*
  Debug.Log ("Here");
 string printString = "";
 foreach (KeyValuePair<string, string[]> kvp in lineDictionary){

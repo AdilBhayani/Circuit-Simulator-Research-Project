@@ -12,6 +12,8 @@ public class ResistorScript : MonoBehaviour {
 	private string IDLeft;
 	private string IDRight;
 	private float value;
+	private static int resistorCount = 0;
+	private string location;
 
 	// Use this for initialization
 	void Start () {
@@ -82,6 +84,26 @@ public class ResistorScript : MonoBehaviour {
 
 	public float getValue(){
 		return value;
+	}
+
+	public static int GetResistorCount(){
+		return resistorCount;
+	}
+
+	public static void increaseResistorCount(){
+		resistorCount++;
+	}
+
+	public static void decreaseResistorCount(){
+		resistorCount--;
+	}
+
+	public string getLocation(){
+		return location;
+	}
+
+	public void setLocation(string newLocation){
+		location = newLocation;
 	}
 
 }

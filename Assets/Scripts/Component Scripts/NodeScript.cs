@@ -10,6 +10,7 @@ public class NodeScript : MonoBehaviour {
 	private string IDRight;
 	private string IDDown;
 	private string IDLeft;
+	private string location;
 
 	// Use this for initialization
 	void Start () {
@@ -64,5 +65,13 @@ public class NodeScript : MonoBehaviour {
 
 	public string getIDLeft(){
 		return IDLeft;
+	}
+
+	public string getLocation(){
+		return location;
+	}
+
+	public void setLocation(string newLocation){
+		location = newLocation;
 	}
 }

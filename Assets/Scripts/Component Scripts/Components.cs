@@ -6,6 +6,7 @@ using SpiceSharp.Components;
 using SpiceSharp.Simulations;
 using System.IO;
 using System;
+using SpiceSharp.Circuits;
 
 public class Components : MonoBehaviour {
 	public GameObject Node;
@@ -16,10 +17,13 @@ public class Components : MonoBehaviour {
 	private static int selectedComponentCount;
 	private static bool paused;
 	private List <GameObject> componentsList;
+	private List <GameObject> resistorList;
+	private List <GameObject> nodeList;
+	private List <GameObject> wireList;
 	private Circuit ckt;
+	private Resistor[] spiceResistorArray;
 	private Resistor r1;
 	private Resistor r2;
-	private Resistor r3;
 	Dictionary<string,string[]> lineDictionary = new Dictionary<string,string[]>();
 	private int verticalGridSize = 5;
 	private int horizontalGridSize = 9;
@@ -27,16 +31,30 @@ public class Components : MonoBehaviour {
 	private int numberOfResistors = 0;
 	private int numberOfWires = 0;
 	private bool[,] rendered;
+	private bool[,] connected;
 	private float wireResistance = 0.000000000001f;
+	private int componentCount = 0;
 
 	// Use this for initialization
 	void Start () {
+		componentCount = 0;
 		rendered = new bool[verticalGridSize,horizontalGridSize];
+		connected = new bool[verticalGridSize, horizontalGridSize];
 		selectedComponentCount = 0;
 		paused = false;
+
 		componentsList = new List <GameObject> ();
+		wireList = new List <GameObject> ();
+		nodeList = new List <GameObject> ();
+		resistorList = new List <GameObject> ();
+
+		spiceResistorArray = new SpiceSharp.Components.Resistor[verticalGridSize*horizontalGridSize];
+
 		LoadCircuit ();
 		RenderCircuit ();
+
+		ConnectCircuit ();
+		PrintComponents ();
 
 		BuildCircuit ();
 		SimulateCircuit ();
@@ -74,25 +92,31 @@ public class Components : MonoBehaviour {
 		return paused;
 	}
 
-	private void createNode(string ID, float anchorX, float anchorY, bool first, bool last, string connectionTop, string connectionRight, string connectionDown, string connectionLeft){
+	private void createNode(string ID, float anchorX, float anchorY, bool first, bool last, string connectionTop, string connectionRight, string connectionDown, string connectionLeft, string location){
 		GameObject newNode = (GameObject)Instantiate (Node, new Vector3 (0, 0, 0), Quaternion.identity);
 		newNode = setPosition (newNode, ID, anchorX, anchorX, anchorY, anchorY);
 		newNode.GetComponent<NodeScript> ().setID (ID);
-
+		newNode.GetComponent<NodeScript> ().setLocation (location);
 		if (first) {
 			newNode.tag = "firstNode";
 		} else if (last) {
 			newNode.tag = "lastNode";
 		}
 		componentsList.Add (newNode);
+		nodeList.Add (newNode);
+		componentCount++;
 	}
 
-	private void createResistor(string ID, float anchorX, float anchorY, float value){
+	private void createResistor(string ID, float anchorX, float anchorY, float value, string location){
 		GameObject newResistor = (GameObject)Instantiate (Resistor, new Vector3 (0, 0, 0), Quaternion.identity);
 		newResistor = setPosition(newResistor, ID, anchorX, anchorX, anchorY, anchorY);
 		newResistor.GetComponent<ResistorScript> ().setID (ID);
 		newResistor.GetComponent<ResistorScript> ().setValue (value);
+		newResistor.GetComponent<ResistorScript> ().setLocation (location);
 		componentsList.Add (newResistor);
+		resistorList.Add (newResistor);
+		componentCount++;
+		ResistorScript.increaseResistorCount ();
 	}
 
 	private void createWire(string ID, float xStart, float xEnd, float yStart, float yEnd, float scale, bool vertical){
@@ -112,6 +136,8 @@ public class Components : MonoBehaviour {
 		newWire.GetComponent<RectTransform> ().localScale = temp;
 		newWire.GetComponent<WireScript> ().setID (ID);
 		componentsList.Add (newWire);
+		wireList.Add (newWire);
+		componentCount++;
 	}
 
 	private GameObject setPosition(GameObject newObject, string ID, float anchorXMin, float anchorXMax, float anchorYMin, float anchorYMax){
@@ -196,6 +222,55 @@ public class Components : MonoBehaviour {
 		}
 	}
 
+	private void ConnectCircuit(){
+		Debug.Log ("ConnectCircuit");
+		foreach (KeyValuePair<string, string[]> kvp in lineDictionary) {
+			switch (kvp.Key) {
+			case "A":
+				ConnectWires (kvp, 0);
+				break;
+			case "B":
+				ConnectWires (kvp, 1);
+				break;
+			case "C":
+				ConnectWires (kvp, 2);
+				break;
+			case "D":
+				ConnectWires (kvp, 3);
+				break;
+			case "E":
+				ConnectWires (kvp, 4);
+				break;
+			}
+		}
+	}
+
+	private void ConnectWires(KeyValuePair<string, string[]> kvp, int row){
+		string[] lineComponents = kvp.Value;
+		for (int x = 0; x < lineComponents.Length; x++) {
+			switch (lineComponents [x]) {
+			case "Wh":
+				if (connected [row, x] == false) {
+					string location1 = "";
+					string location2 = "";
+					if (x >= 0) {
+						location1 = convertIndexToLetter (row) + (x - 1).ToString ();
+					}
+					int newX = x + 1;
+					while (lineComponents [newX] == "Wh") {
+						connected [row, newX] = true;
+						newX++;
+					}
+					location2 = convertIndexToLetter (row) + (newX).ToString ();
+					makeHorizontalConnections (location1, location2, true);
+					connected [row, x] = true;
+				}
+				break;
+			}
+		}
+				
+	}
+
 	private void drawCircuit(KeyValuePair<string, string[]> kvp, float verticalHeight, int row){
 		string[] lineComponents = kvp.Value;
 		for(int x = 0; x < lineComponents.Length; x++){
@@ -213,7 +288,8 @@ public class Components : MonoBehaviour {
 				if (x == 0 && kvp.Key == "E") {
 					lastNode = true;
 				}
-				createNode ("N" + numberOfNodes.ToString (), x * 0.9f / horizontalGridSize + 0.05f, verticalHeight, firstNode, lastNode, null, null, null, null);
+				string location = convertIndexToLetter (row) + x.ToString ();
+				createNode ("N" + numberOfNodes.ToString (), x * 0.9f / horizontalGridSize + 0.05f, verticalHeight, firstNode, lastNode, null, null, null, null, location);
 				numberOfNodes++;
 				rendered [row, x] = true;
 				break;
@@ -236,8 +312,7 @@ public class Components : MonoBehaviour {
 				if (rendered [row, x] == false) {
 					Debug.Log ("Rendering vertical wire");
 					int newRow = row + 1;
-					char letterCharacter = (char)(newRow + 65);
-					string letterString = letterCharacter.ToString ();
+					string letterString = convertIndexToLetter (newRow);
 					string[] newLineComponents = lineDictionary [letterString];
 					while (newLineComponents [x] == "Wv") {
 						rendered [newRow, x] = true;
@@ -246,7 +321,6 @@ public class Components : MonoBehaviour {
 						newRow++;
 						newLineComponents = lineDictionary [letter];
 					}
-					newRow = newRow;
 					float minX = x * 0.9f / horizontalGridSize + 0.05f;
 					float maxY = verticalHeight + 1.0f / verticalGridSize;
 					Debug.Log ("NewRow is: " + newRow);
@@ -263,8 +337,10 @@ public class Components : MonoBehaviour {
 				if (lineComponents[x].StartsWith("Rh") || lineComponents[x].StartsWith("Rv") ){
 					string resistanceString = lineComponents [x].Substring (2);
 					float resistance = float.Parse(resistanceString, System.Globalization.CultureInfo.InvariantCulture);
+					string resistorLocation = convertIndexToLetter (row) + x.ToString ();
 					Debug.Log (resistance.ToString());	
-					createResistor ("R" + numberOfResistors.ToString (), x * 0.9f / horizontalGridSize + 0.05f, verticalHeight,resistance);
+					Debug.Log (resistorLocation);
+					createResistor ("R" + numberOfResistors.ToString (), x * 0.9f / horizontalGridSize + 0.05f, verticalHeight,resistance, resistorLocation);
 					numberOfResistors++;
 				}
 				break;
@@ -279,16 +355,28 @@ public class Components : MonoBehaviour {
 		dc.OnExportSimulationData += (object sender, SimulationData data) =>
 		{
 			if (dc.Sweeps[0].CurrentValue == 1){
+				double vr0 = Math.Abs(data.GetVoltage(spiceResistorArray[0].GetNode(0)) - data.GetVoltage(spiceResistorArray[0].GetNode(1)));
 				double vr1 = Math.Abs(data.GetVoltage(r1.GetNode(0)) - data.GetVoltage(r1.GetNode(1)));
 				double vr2 = Math.Abs(data.GetVoltage(r2.GetNode(0)) - data.GetVoltage(r2.GetNode(1)));
-				double vr3 = Math.Abs(data.GetVoltage(r3.GetNode(0)) - data.GetVoltage(r3.GetNode(1)));
 				//Debug.Log(r1.GetCurrent(ckt));
-				Debug.Log("Vr1 is: " + vr1);
-				Debug.Log("Vr2 is: " + vr2);
-				Debug.Log("Vr3 is: " + vr3);
+				Debug.Log("Vr1 is: " + vr0);
+				Debug.Log("Vr2 is: " + vr1);
+				Debug.Log("Vr3 is: " + vr2);
 			}
 		};
 		ckt.Simulate(dc);
+	}
+
+	private void PrintComponents(){
+		Debug.Log ("Printing resistors");
+		foreach (GameObject resistorObject in resistorList){
+			ResistorScript resistorObjectScript = resistorObject.GetComponent<ResistorScript> ();
+			string resistorObjectID = resistorObjectScript.getID ();
+			string resistorObjectLocation = resistorObjectScript.getLocation ();
+			string resistorObjectLeft = resistorObjectScript.getIDLeft ();
+			string resistorObjectRight = resistorObjectScript.getIDRight ();
+			Debug.Log ("ID: " + resistorObjectID + ", Location: " + resistorObjectLocation + ", Left: " + resistorObjectLeft + ", Right: " + resistorObjectRight);
+		}
 	}
 
 	private void BuildCircuit(){
@@ -296,15 +384,138 @@ public class Components : MonoBehaviour {
 		ckt = new Circuit();
 		ckt.Objects.Add( 
 			new Voltagesource("V1", "A0", "GND", 1.0),
-			r1 = new Resistor("R1", "A0", "A8", 12),
-			new Resistor("Vx1", "A8", "C8", wireResistance),
-			r2 = new Resistor("R2", "C2", "C8", 16),
-			new Resistor("Vx2", "C8", "E8", wireResistance),
-			new Resistor("Vx3", "C2", "E2", wireResistance),
-			r3 = new Resistor("R3", "E2", "E8", 15),
-			new Resistor ("Vx4", "E0","E2", wireResistance),
 			new Resistor ("Vx5", "E0", "GND", wireResistance)
 		);
+		foreach (GameObject resistorObject in resistorList) {
+			if (resistorObject != null) {
+				string ID = resistorObject.GetComponent<ResistorScript> ().getID ();
+				float value = resistorObject.GetComponent<ResistorScript> ().getValue ();
+				Debug.Log (value.ToString ());
+			}
+		}
+
+		ckt.Objects.Add(
+			spiceResistorArray[0] = new Resistor("R0", "A0", "A8", 12),
+			new Resistor("Vx1", "A8", "C8", wireResistance),
+			r1 = new Resistor("R1", "C2", "C8", 16),
+			new Resistor("Vx2", "C8", "E8", wireResistance),
+			new Resistor("Vx3", "C2", "E2", wireResistance),
+			r2 = new Resistor("R2", "E2", "E8", 15),
+			new Resistor ("Vx4", "E0","E2", wireResistance)
+		);
+	}
+
+	private string convertIndexToLetter(int number){
+		char letterCharacter = (char)(number + 65);
+		return letterCharacter.ToString ();
+	}
+
+	private void makeHorizontalConnections(string location1, string location2,bool location1Lower){
+		Debug.Log("Location1 is: " + location1);
+		Debug.Log("Location2 is: " + location2);
+		int foundObjectCount = 0;
+		string object1Location = "";
+		string object2Location = "";
+		bool object1Resistor = false;
+		bool object2Resistor = false;
+		GameObject object1 = null;
+		GameObject object2 = null;
+		foreach (GameObject resistorObject in resistorList){
+			string resistorObjectLocation = resistorObject.GetComponent<ResistorScript> ().getLocation ();
+			if (resistorObjectLocation == location1 || resistorObjectLocation == location2) {
+				if (object1 == null) {
+					object1 = resistorObject;
+					object1Resistor = true;
+					object1Location = object1.GetComponent<ResistorScript> ().getLocation ();
+				} else if (object2 == null) {
+					object2 = resistorObject;
+					object2Resistor = true;
+					object2Location = object2.GetComponent<ResistorScript> ().getLocation ();
+				}
+				foundObjectCount++;
+			}
+		}
+		foreach (GameObject nodeObject in nodeList) {
+			string nodeObjectLocation = nodeObject.GetComponent<NodeScript> ().getLocation ();
+			if (nodeObjectLocation == location1 || nodeObjectLocation == location2) {
+				if (object1 == null) {
+					object1 = nodeObject;
+					object1Location = object1.GetComponent<NodeScript> ().getLocation ();
+				} else if (object2 == null) {
+					object2 = nodeObject;
+					object2Location = object2.GetComponent<NodeScript> ().getLocation ();
+				}
+				foundObjectCount++;
+			}
+		}
+		if (foundObjectCount < 2) {
+			Debug.Log ("Missing " + (2 - foundObjectCount).ToString () + " object(s) while trying to connect locations: " + location1 + " " + location2);
+		} else {
+			if (object1Resistor) {
+				string resistorLocation = object1.GetComponent<ResistorScript> ().getLocation ();
+				if (resistorLocation == location1) {
+					if (location1Lower) {
+						if (object2Resistor) {
+							object1.GetComponent<ResistorScript> ().setIDRight (object2.GetComponent<ResistorScript> ().getID ());
+						} else {
+							object1.GetComponent<ResistorScript> ().setIDRight (object2.GetComponent<NodeScript> ().getID ());
+						}
+					} else {
+						if (object2Resistor) {
+							object1.GetComponent<ResistorScript> ().setIDLeft (object2.GetComponent<ResistorScript> ().getID ());
+						} else {
+							object1.GetComponent<ResistorScript> ().setIDLeft (object2.GetComponent<NodeScript> ().getID ());
+						}
+					}
+				} else {
+					if (location1Lower) {
+						if (object2Resistor) {
+							object1.GetComponent<ResistorScript> ().setIDLeft (object2.GetComponent<ResistorScript> ().getID ());
+						} else {
+							object1.GetComponent<ResistorScript> ().setIDLeft (object2.GetComponent<NodeScript> ().getID ());
+						}
+					} else {
+						if (object2Resistor) {
+							object1.GetComponent<ResistorScript> ().setIDRight (object2.GetComponent<ResistorScript> ().getID ());
+						} else {
+							object1.GetComponent<ResistorScript> ().setIDRight (object2.GetComponent<NodeScript> ().getID ());
+						}
+					}
+				}
+			} else {
+				string nodeLocation = object1.GetComponent<NodeScript> ().getLocation ();
+				if (nodeLocation == location1) {
+					if (location1Lower) {
+						if (object2Resistor) {
+							object1.GetComponent<NodeScript> ().setIDRight (object2.GetComponent<ResistorScript> ().getID ());
+						} else {
+							object1.GetComponent<NodeScript> ().setIDRight (object2.GetComponent<NodeScript> ().getID ());
+						}
+					} else {
+						if (object2Resistor) {
+							object1.GetComponent<NodeScript> ().setIDLeft (object2.GetComponent<ResistorScript> ().getID ());
+						} else {
+							object1.GetComponent<NodeScript> ().setIDLeft (object2.GetComponent<NodeScript> ().getID ());
+						}
+					}
+				}else {
+					if (location1Lower) {
+						if (object2Resistor) {
+							object1.GetComponent<NodeScript> ().setIDLeft (object2.GetComponent<ResistorScript> ().getID ());
+						} else {
+							object1.GetComponent<NodeScript> ().setIDLeft (object2.GetComponent<NodeScript> ().getID ());
+						}
+					} else {
+						if (object2Resistor) {
+							object1.GetComponent<NodeScript> ().setIDRight (object2.GetComponent<ResistorScript> ().getID ());
+						} else {
+							object1.GetComponent<NodeScript> ().setIDRight (object2.GetComponent<NodeScript> ().getID ());
+						}
+					}
+				}
+			}
+
+		}
 	}
 }
 

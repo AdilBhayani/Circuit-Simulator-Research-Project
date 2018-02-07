@@ -32,9 +32,10 @@ public class Components : MonoBehaviour {
 	private int numberOfWires = 0;
 	private bool[,] rendered;
 	private bool[,] connected;
-	private float wireResistance = 0.000000000001f;
+	private float wireResistance = 0.00000001f;
 	private int componentCount = 0;
 	private int spiceResistorArrayCount = 0;
+	private SimulationData newData;
 
 	// Use this for initialization
 	void Start () {
@@ -150,17 +151,15 @@ public class Components : MonoBehaviour {
 
 	public void checkTransformSeries(){
 		if (selectedComponentCount == 2) {
-			foreach (GameObject componentObject in componentsList) {
-				if (componentObject.GetComponents<ResistorScript> ().Length != 0) {
-					if (componentObject.GetComponent<ResistorScript> ().getID () == "R1") {
-						Destroy (componentObject);
-						selectedComponentCount = 0;
-					}
-					if (componentObject.GetComponent<ResistorScript> ().getID () == "R0") {
-						componentObject.GetComponent<ResistorScript> ().setValue (25.0f);
-					}
-				}
-			}
+			string firstID = ResistorScript.selectedList [0];
+			string secondID = ResistorScript.selectedList [1];
+			Resistor spiceResistor1 = GetSpiceResistorByID (firstID);
+			Resistor spiceResistor2 = GetSpiceResistorByID (secondID);
+
+			double current1 = spiceResistor1.GetCurrent (ckt);
+			double current2 = spiceResistor2.GetCurrent (ckt);
+			Debug.Log (current1);
+			Debug.Log (current2);
 			UpdateHistory.appendToHistory ("Series Transform: \nR(10) & R(15)");
 		} else {
 			UpdateFeedback.updateMessage ("Select two components first");
@@ -383,6 +382,7 @@ public class Components : MonoBehaviour {
 				Debug.Log("Vr1 is: " + vr0);
 				Debug.Log("Vr2 is: " + vr1);
 				Debug.Log("Vr3 is: " + vr2);
+				newData = data;
 			}
 		};
 		ckt.Simulate(dc);
@@ -808,6 +808,10 @@ public class Components : MonoBehaviour {
 		return null;
 	}
 
+	private Resistor GetSpiceResistorByID(string ID){
+		return spiceResistorArray[Int32.Parse(ID.Substring(1))];
+	}
+
 }
 
 /*
@@ -818,4 +822,17 @@ foreach (KeyValuePair<string, string[]> kvp in lineDictionary){
 	printString += "\n";
 }
 Debug.Log (printString);
+
+
+foreach (GameObject componentObject in componentsList) {
+	if (componentObject.GetComponents<ResistorScript> ().Length != 0) {
+		if (componentObject.GetComponent<ResistorScript> ().getID () == "R1") {
+			Destroy (componentObject);
+			selectedComponentCount = 0;
+		}
+		if (componentObject.GetComponent<ResistorScript> ().getID () == "R0") {
+			componentObject.GetComponent<ResistorScript> ().setValue (25.0f);
+		}
+	}
+}
 */

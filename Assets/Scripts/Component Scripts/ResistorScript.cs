@@ -17,9 +17,11 @@ public class ResistorScript : MonoBehaviour {
 	private static int resistorCount = 0;
 	private string location;
 	private bool vertical;
+	public static List <string> selectedList = new List<string> ();
 
 	// Use this for initialization
 	void Start () {
+		selectedList.Clear ();
 		spirit = resistor.GetComponent<SpriteRenderer> ();
 		spirit.color = Color.white;
 		value = 0;
@@ -44,11 +46,13 @@ public class ResistorScript : MonoBehaviour {
 				if (Components.decreaseSelected ()) {
 					spirit.color = Color.white;
 					selected = false;
+					selectedList.Remove (ID);
 				}
 			} else {
 				if (Components.increaseSelected ()) {
 					spirit.color = Color.yellow;
 					selected = true;
+					selectedList.Add (ID);
 				} else {
 					UpdateFeedback.updateMessage ("Select only two components");
 				}

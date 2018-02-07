@@ -377,6 +377,18 @@ public class Components : MonoBehaviour {
 			string resistorObjectRight = resistorObjectScript.getIDRight ();
 			Debug.Log ("ID: " + resistorObjectID + ", Location: " + resistorObjectLocation + ", Left: " + resistorObjectLeft + ", Right: " + resistorObjectRight);
 		}
+
+		Debug.Log ("Printing nodes");
+		foreach (GameObject nodeObject in nodeList) {
+			NodeScript nodeObjectScript = nodeObject.GetComponent<NodeScript> ();
+			string nodeObjectID = nodeObjectScript.getID ();
+			string nodeObjectLocation = nodeObjectScript.getLocation ();
+			string nodeObjectLeft = nodeObjectScript.getIDLeft ();
+			string nodeObjectRight = nodeObjectScript.getIDRight ();
+			string nodeObjectUp = nodeObjectScript.getIDUp ();
+			string nodeObjectDown = nodeObjectScript.getIDDown ();
+			Debug.Log ("ID: " + nodeObjectID + ", Location: " + nodeObjectLocation + ", Left: " + nodeObjectLeft + ", Right: " + nodeObjectRight + ", Up: " + nodeObjectUp + ", Down: " + nodeObjectDown);
+		}
 	}
 
 	private void BuildCircuit(){
@@ -451,34 +463,55 @@ public class Components : MonoBehaviour {
 		if (foundObjectCount < 2) {
 			Debug.Log ("Missing " + (2 - foundObjectCount).ToString () + " object(s) while trying to connect locations: " + location1 + " " + location2);
 		} else {
+			Debug.Log ("object1Location: " + object1Location);
+			Debug.Log ("object2Location: " + object2Location);
+			Debug.Log ("object1Resistor: " + object1Resistor);
+			Debug.Log ("object2Resistor: " + object2Resistor);
+
 			if (object1Resistor) {
 				string resistorLocation = object1.GetComponent<ResistorScript> ().getLocation ();
 				if (resistorLocation == location1) {
 					if (location1Lower) {
 						if (object2Resistor) {
 							object1.GetComponent<ResistorScript> ().setIDRight (object2.GetComponent<ResistorScript> ().getID ());
+							object2.GetComponent<ResistorScript> ().setIDLeft (object1.GetComponent<ResistorScript> ().getID ());
+							Debug.Log ("A");
 						} else {
 							object1.GetComponent<ResistorScript> ().setIDRight (object2.GetComponent<NodeScript> ().getID ());
+							object2.GetComponent<NodeScript> ().setIDLeft (object1.GetComponent<ResistorScript> ().getID ());
+							Debug.Log ("B");
 						}
 					} else {
 						if (object2Resistor) {
 							object1.GetComponent<ResistorScript> ().setIDLeft (object2.GetComponent<ResistorScript> ().getID ());
+							object2.GetComponent<ResistorScript> ().setIDRight (object1.GetComponent<ResistorScript> ().getID ());
+							Debug.Log ("C");
 						} else {
 							object1.GetComponent<ResistorScript> ().setIDLeft (object2.GetComponent<NodeScript> ().getID ());
+							object2.GetComponent<NodeScript> ().setIDRight (object1.GetComponent<ResistorScript> ().getID ());
+							Debug.Log ("D");
 						}
 					}
 				} else {
 					if (location1Lower) {
 						if (object2Resistor) {
 							object1.GetComponent<ResistorScript> ().setIDLeft (object2.GetComponent<ResistorScript> ().getID ());
+							object2.GetComponent<ResistorScript> ().setIDRight(object1.GetComponent<ResistorScript> ().getID ());
+							Debug.Log ("E");
 						} else {
 							object1.GetComponent<ResistorScript> ().setIDLeft (object2.GetComponent<NodeScript> ().getID ());
+							object2.GetComponent<NodeScript> ().setIDRight (object1.GetComponent<ResistorScript> ().getID ());
+							Debug.Log ("F");
 						}
 					} else {
 						if (object2Resistor) {
 							object1.GetComponent<ResistorScript> ().setIDRight (object2.GetComponent<ResistorScript> ().getID ());
+							object2.GetComponent<ResistorScript> ().setIDLeft (object1.GetComponent<ResistorScript> ().getID ());
+							Debug.Log ("G");
 						} else {
 							object1.GetComponent<ResistorScript> ().setIDRight (object2.GetComponent<NodeScript> ().getID ());
+							object2.GetComponent<NodeScript> ().setIDLeft (object1.GetComponent<ResistorScript> ().getID ());
+							Debug.Log ("H");
 						}
 					}
 				}
@@ -488,28 +521,44 @@ public class Components : MonoBehaviour {
 					if (location1Lower) {
 						if (object2Resistor) {
 							object1.GetComponent<NodeScript> ().setIDRight (object2.GetComponent<ResistorScript> ().getID ());
+							object2.GetComponent<ResistorScript> ().setIDLeft (object1.GetComponent<NodeScript> ().getID ());
+							Debug.Log ("I");
 						} else {
 							object1.GetComponent<NodeScript> ().setIDRight (object2.GetComponent<NodeScript> ().getID ());
+							object2.GetComponent<NodeScript> ().setIDLeft (object1.GetComponent<NodeScript> ().getID ());
+							Debug.Log ("J");
 						}
 					} else {
 						if (object2Resistor) {
 							object1.GetComponent<NodeScript> ().setIDLeft (object2.GetComponent<ResistorScript> ().getID ());
+							object2.GetComponent<ResistorScript> ().setIDRight (object1.GetComponent<NodeScript> ().getID ());
+							Debug.Log ("K");
 						} else {
 							object1.GetComponent<NodeScript> ().setIDLeft (object2.GetComponent<NodeScript> ().getID ());
+							object2.GetComponent<NodeScript> ().setIDRight(object1.GetComponent<NodeScript> ().getID ());
+							Debug.Log ("L");
 						}
 					}
 				}else {
 					if (location1Lower) {
 						if (object2Resistor) {
 							object1.GetComponent<NodeScript> ().setIDLeft (object2.GetComponent<ResistorScript> ().getID ());
+							object2.GetComponent<ResistorScript> ().setIDRight(object1.GetComponent<NodeScript> ().getID ());
+							Debug.Log ("M");
 						} else {
 							object1.GetComponent<NodeScript> ().setIDLeft (object2.GetComponent<NodeScript> ().getID ());
+							object2.GetComponent<NodeScript> ().setIDRight (object1.GetComponent<NodeScript> ().getID ());
+							Debug.Log ("N");
 						}
 					} else {
 						if (object2Resistor) {
 							object1.GetComponent<NodeScript> ().setIDRight (object2.GetComponent<ResistorScript> ().getID ());
+							object2.GetComponent<ResistorScript> ().setIDLeft(object1.GetComponent<NodeScript> ().getID ());
+							Debug.Log ("O");
 						} else {
 							object1.GetComponent<NodeScript> ().setIDRight (object2.GetComponent<NodeScript> ().getID ());
+							object2.GetComponent<NodeScript> ().setIDLeft (object1.GetComponent<NodeScript> ().getID ());
+							Debug.Log ("P");
 						}
 					}
 				}

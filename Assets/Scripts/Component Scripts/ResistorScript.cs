@@ -9,6 +9,8 @@ public class ResistorScript : MonoBehaviour {
 	private SpriteRenderer spirit;
 	private bool selected = false;
 	private string ID;
+	private string IDUp;
+	private string IDDown;
 	private string IDLeft;
 	private string IDRight;
 	private float value;
@@ -106,4 +108,19 @@ public class ResistorScript : MonoBehaviour {
 		location = newLocation;
 	}
 
+	public void setIDUp(string newID){
+		IDUp = newID;
+	}
+
+	public void setIDDown(string newID){
+		IDDown = newID;
+	}
+
+	public string getIDUp(){
+		return IDUp;
+	}
+
+	public string getIDDown(){
+		return IDDown;
+	}
 }

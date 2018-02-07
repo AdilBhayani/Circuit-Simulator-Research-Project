@@ -34,6 +34,7 @@ public class Components : MonoBehaviour {
 	private bool[,] connected;
 	private float wireResistance = 0.000000000001f;
 	private int componentCount = 0;
+	private int spiceResistorArrayCount = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -376,8 +377,8 @@ public class Components : MonoBehaviour {
 		{
 			if (dc.Sweeps[0].CurrentValue == 1){
 				double vr0 = Math.Abs(data.GetVoltage(spiceResistorArray[0].GetNode(0)) - data.GetVoltage(spiceResistorArray[0].GetNode(1)));
-				double vr1 = Math.Abs(data.GetVoltage(r1.GetNode(0)) - data.GetVoltage(r1.GetNode(1)));
-				double vr2 = Math.Abs(data.GetVoltage(r2.GetNode(0)) - data.GetVoltage(r2.GetNode(1)));
+				double vr1 = Math.Abs(data.GetVoltage(spiceResistorArray[1].GetNode(0)) - data.GetVoltage(spiceResistorArray[1].GetNode(1)));
+				double vr2 = Math.Abs(data.GetVoltage(spiceResistorArray[2].GetNode(0)) - data.GetVoltage(spiceResistorArray[2].GetNode(1)));
 				//Debug.Log(r1.GetCurrent(ckt));
 				Debug.Log("Vr1 is: " + vr0);
 				Debug.Log("Vr2 is: " + vr1);
@@ -412,29 +413,88 @@ public class Components : MonoBehaviour {
 	}
 
 	private void BuildCircuit(){
+		Debug.Log ("Build circuit");
 		// Build the circuit
 		ckt = new Circuit();
 		ckt.Objects.Add( 
 			new Voltagesource("V1", "A0", "GND", 1.0),
-			new Resistor ("Vx5", "E0", "GND", wireResistance)
+			new Resistor ("Vx0", "E0", "GND", wireResistance)
 		);
+
 		foreach (GameObject resistorObject in resistorList) {
 			if (resistorObject != null) {
-				string ID = resistorObject.GetComponent<ResistorScript> ().getID ();
-				float value = resistorObject.GetComponent<ResistorScript> ().getValue ();
-				Debug.Log (value.ToString ());
+				ResistorScript resistorObjectScript = resistorObject.GetComponent<ResistorScript> ();
+				string resistorObjectID = resistorObjectScript.getID ();
+				string resistorObjectLocation = resistorObjectScript.getLocation ();
+				string resistorObjectLeft = resistorObjectScript.getIDLeft ();
+				string resistorObjectRight = resistorObjectScript.getIDRight ();
+				float resistorvalue = resistorObjectScript.getValue ();
+
+				string objectLeftLocation = null;
+				string objectRightLocation = null;
+
+				if (resistorObjectLeft.StartsWith("R")){
+					GameObject leftResistorObject =  GetResistorByID (resistorObjectLeft);
+					objectLeftLocation = leftResistorObject.GetComponent<ResistorScript> ().getLocation ();
+				}else{
+					GameObject leftNodeObject =  GetNodeByID (resistorObjectLeft);
+					objectLeftLocation = leftNodeObject.GetComponent<NodeScript> ().getLocation ();
+				}
+
+				if (resistorObjectRight.StartsWith("R")){
+					GameObject rightResistorObject =  GetResistorByID (resistorObjectRight);
+					objectRightLocation = rightResistorObject.GetComponent<ResistorScript> ().getLocation ();
+				}else{
+					GameObject rightNodeObject =  GetNodeByID (resistorObjectRight);
+					objectRightLocation = rightNodeObject.GetComponent<NodeScript> ().getLocation ();
+				}
+				 
+				Debug.Log ("objectLeftLocation is: " + objectLeftLocation);
+				Debug.Log ("objectRightLocation is: " + objectRightLocation);
+				Debug.Log ("ID: " + resistorObjectID + ", Left: " + resistorObjectLeft + ", Right: " + resistorObjectRight + ", Value: " + resistorvalue);
+				ckt.Objects.Add (spiceResistorArray [spiceResistorArrayCount] = new Resistor (resistorObjectID, objectLeftLocation, objectRightLocation, resistorvalue));
+				spiceResistorArrayCount++;
 			}
 		}
 
-		ckt.Objects.Add(
-			spiceResistorArray[0] = new Resistor("R0", "A0", "A8", 12),
-			new Resistor("Vx1", "A8", "C8", wireResistance),
-			r1 = new Resistor("R1", "C2", "C8", 16),
-			new Resistor("Vx2", "C8", "E8", wireResistance),
-			new Resistor("Vx3", "C2", "E2", wireResistance),
-			r2 = new Resistor("R2", "E2", "E8", 15),
-			new Resistor ("Vx4", "E0","E2", wireResistance)
-		);
+		int wireCounter = 1;
+		foreach (GameObject nodeObject in nodeList) {
+			if (nodeObject != null) {
+				NodeScript nodeObjectScript = nodeObject.GetComponent<NodeScript> ();
+				string nodeObjectID = nodeObjectScript.getID ();
+				string nodeObjectLocation = nodeObjectScript.getLocation ();
+				string nodeObjectLeft = nodeObjectScript.getIDLeft ();
+				string nodeObjectRight = nodeObjectScript.getIDRight ();
+				string nodeObjectUp = nodeObjectScript.getIDUp ();
+				string nodeObjectDown = nodeObjectScript.getIDUp ();
+
+				if (!string.IsNullOrEmpty(nodeObjectLeft) && nodeObjectLeft.StartsWith("N")){
+					GameObject leftNodeObject =  GetNodeByID (nodeObjectLeft);
+					string objectLeftLocation = leftNodeObject.GetComponent<NodeScript> ().getLocation ();
+					ckt.Objects.Add(new Resistor ("Vx"+wireCounter.ToString(),nodeObjectLocation,objectLeftLocation, wireResistance));
+					wireCounter++;
+				}
+				if (!string.IsNullOrEmpty(nodeObjectRight) && nodeObjectRight.StartsWith("N")){
+					GameObject rightNodeObject =  GetNodeByID (nodeObjectRight);
+					string objectRightLocation = rightNodeObject.GetComponent<NodeScript> ().getLocation ();
+					ckt.Objects.Add(new Resistor ("Vx"+wireCounter.ToString(),nodeObjectLocation,objectRightLocation, wireResistance));
+					wireCounter++;
+				}
+
+				if (!string.IsNullOrEmpty(nodeObjectUp) && nodeObjectUp.StartsWith("N")){
+					GameObject upNodeObject =  GetNodeByID (nodeObjectUp);
+					string objectUpLocation = upNodeObject.GetComponent<NodeScript> ().getLocation ();
+					ckt.Objects.Add(new Resistor ("Vx"+wireCounter.ToString(),nodeObjectLocation,objectUpLocation, wireResistance));
+					wireCounter++;
+				}
+				if (!string.IsNullOrEmpty(nodeObjectDown) && nodeObjectDown.StartsWith("N")){
+					GameObject downNodeObject =  GetNodeByID (nodeObjectDown);
+					string objectDownLocation = downNodeObject.GetComponent<NodeScript> ().getLocation ();
+					ckt.Objects.Add(new Resistor ("Vx"+wireCounter.ToString(),nodeObjectLocation,objectDownLocation, wireResistance));
+					wireCounter++;
+				}
+			}
+		}
 	}
 
 	private string ConvertIndexToLetter(int number){
@@ -725,6 +785,29 @@ public class Components : MonoBehaviour {
 
 		}
 	}
+
+	private GameObject GetResistorByID(string ID){
+		foreach (GameObject resistorObject in resistorList) {
+			ResistorScript resistorObjectScript = resistorObject.GetComponent<ResistorScript> ();
+			if (resistorObjectScript.getID () == ID) {
+				return resistorObject;
+			}
+		}
+		Debug.Log ("Resistor with that ID could not be found");
+		return null;
+	}
+
+	private GameObject GetNodeByID(string ID){
+		foreach (GameObject nodeObject in nodeList) {
+			NodeScript nodeObjectScript = nodeObject.GetComponent<NodeScript> ();
+			if (nodeObjectScript.getID () == ID) {
+				return nodeObject;
+			}
+		}
+		Debug.Log ("Node with that ID could not be found");
+		return null;
+	}
+
 }
 
 /*

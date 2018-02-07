@@ -16,6 +16,7 @@ public class ResistorScript : MonoBehaviour {
 	private float value;
 	private static int resistorCount = 0;
 	private string location;
+	private bool vertical;
 
 	// Use this for initialization
 	void Start () {
@@ -122,5 +123,13 @@ public class ResistorScript : MonoBehaviour {
 
 	public string getIDDown(){
 		return IDDown;
+	}
+
+	public void SetVertical(bool newVertical){
+		vertical = newVertical;
+	}
+
+	public bool getVertical(){
+		return vertical;
 	}
 }

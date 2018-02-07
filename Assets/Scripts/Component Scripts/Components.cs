@@ -182,29 +182,43 @@ public class Components : MonoBehaviour {
 				Debug.Log ("In series");
 				UpdateHistory.appendToHistory ("Series Transform: \nR(" + value1.ToString() + ") & R(" + value2.ToString() +")\n");
 				GameObject secondResistorObject = GetResistorByID (secondID);
+				GameObject firstResistorObject = GetResistorByID (firstID);
 				string location2 = secondResistorObject.GetComponent<ResistorScript> ().getLocation ();
-				string node0 = spiceResistorArray [Int32.Parse(secondID.Substring (1,secondID.Length-1))].GetNode (0);
-				string node1 = spiceResistorArray [Int32.Parse(secondID.Substring (1,secondID.Length-1))].GetNode (1);
-				if (string.Compare (node0.Substring(0,1), node1.Substring(0,1)) == 0) {
+				string location1 = firstResistorObject.GetComponent<ResistorScript> ().getLocation ();
+				string secondNode0 = spiceResistorArray [Int32.Parse(secondID.Substring (1,secondID.Length-1))].GetNode (0);
+				string secondNode1 = spiceResistorArray [Int32.Parse(secondID.Substring (1,secondID.Length-1))].GetNode (1);
+				string firstNode0 = spiceResistorArray [Int32.Parse(firstID.Substring (1,firstID.Length-1))].GetNode (0);
+				string firstNode1 = spiceResistorArray [Int32.Parse(firstID.Substring (1,firstID.Length-1))].GetNode (1);
+				//If horizontally connected
+				if (string.Compare (secondNode0.Substring (0, 1), secondNode1.Substring (0, 1)) == 0) {
 					Debug.Log ("Horizontally connected");
-					string[] line = lineDictionary[node0.Substring (0, 1)];
+					string[] secondLine = lineDictionary [location2.Substring (0, 1)];
+					string[] firstLine = lineDictionary [location1.Substring (0, 1)];
 					Debug.Log (Int32.Parse (location2.Substring (1, location2.Length - 1)));
-					line [Int32.Parse (location2.Substring (1, location2.Length - 1))] = "Wh";
-					Debug.Log(string.Format ("Key = {0}, Value = {1}", "A", string.Join(".", line)));
-					lineDictionary [node0.Substring (0, 1)] = line;
+					secondLine [Int32.Parse (location2.Substring (1, location2.Length - 1))] = "Wh";
+					//First resistor is on same row
+					if (string.Compare (secondNode0.Substring (0, 1), secondNode1.Substring (0, 1)) == 0) {
+						firstLine [Int32.Parse (location1.Substring (1, location2.Length - 1))] = "Rh" + (value1 + value2).ToString ();
+					} else {
+						firstLine [Int32.Parse (location1.Substring (1, location2.Length - 1))] = "Rv" + (value1 + value2).ToString ();
+					}
+					Debug.Log (string.Format ("Key = {0}, Value = {1}", "A", string.Join (".", secondLine)));
+					lineDictionary [secondNode0.Substring (0, 1)] = secondLine;
 					string printString = "";
-					foreach (KeyValuePair<string, string[]> kvp in lineDictionary){
-						printString += string.Format ("Key = {0}, Value = {1}", kvp.Key, string.Join(".", kvp.Value));
+					foreach (KeyValuePair<string, string[]> kvp in lineDictionary) {
+						printString += string.Format ("Key = {0}, Value = {1}", kvp.Key, string.Join (".", kvp.Value));
 						printString += "\n";
 					}
 					Debug.Log (printString);
-					ClearAll ();
-					RenderCircuit ();
-					ConnectCircuit ();
-					BuildCircuit ();
-					PrintComponents ();
-					SimulateCircuit ();
+				} else {
+					//Code for vertically connected resistors here.
 				}
+				ClearAll ();
+				RenderCircuit ();
+				ConnectCircuit ();
+				BuildCircuit ();
+				PrintComponents ();
+				SimulateCircuit ();
 			} else {
 				Debug.Log ("Not in series");
 				UpdateFeedback.updateMessage ("Components are not in series");

@@ -39,27 +39,38 @@ public class Components : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		componentCount = 0;
-		rendered = new bool[verticalGridSize,horizontalGridSize];
-		connected = new bool[verticalGridSize, horizontalGridSize];
-		selectedComponentCount = 0;
 		paused = false;
 
+		ClearAll ();
+		LoadCircuit ();
+
+		RenderCircuit ();
+		ConnectCircuit ();
+		//PrintComponents ();
+
+		BuildCircuit ();
+		SimulateCircuit ();
+	}
+
+	private void ClearAll(){
+		if (componentsList != null) {
+			foreach (GameObject component in componentsList) {
+				Destroy (component);
+			}
+		}
+		numberOfNodes = 0;
+		numberOfResistors = 0;
+		numberOfWires = 0;
+		componentCount = 0;
+		selectedComponentCount = 0;
+		spiceResistorArrayCount = 0;
+		rendered = new bool[verticalGridSize,horizontalGridSize];
+		connected = new bool[verticalGridSize, horizontalGridSize];
 		componentsList = new List <GameObject> ();
 		wireList = new List <GameObject> ();
 		nodeList = new List <GameObject> ();
 		resistorList = new List <GameObject> ();
-
 		spiceResistorArray = new SpiceSharp.Components.Resistor[verticalGridSize*horizontalGridSize];
-
-		LoadCircuit ();
-		RenderCircuit ();
-
-		ConnectCircuit ();
-		PrintComponents ();
-
-		BuildCircuit ();
-		SimulateCircuit ();
 	}
 
 	// Update is called once per frame
@@ -153,14 +164,52 @@ public class Components : MonoBehaviour {
 		if (selectedComponentCount == 2) {
 			string firstID = ResistorScript.selectedList [0];
 			string secondID = ResistorScript.selectedList [1];
+			if (string.Compare (firstID, secondID) > 0) {
+				string temp = firstID;
+				firstID = secondID;
+				secondID = temp;
+			}
+
 			Resistor spiceResistor1 = GetSpiceResistorByID (firstID);
 			Resistor spiceResistor2 = GetSpiceResistorByID (secondID);
 
 			double current1 = spiceResistor1.GetCurrent (ckt);
 			double current2 = spiceResistor2.GetCurrent (ckt);
-			Debug.Log (current1);
-			Debug.Log (current2);
-			UpdateHistory.appendToHistory ("Series Transform: \nR(10) & R(15)");
+			double value1 = spiceResistor1.Ask ("resistance");
+			double value2 = spiceResistor2.Ask ("resistance");
+
+			if (Math.Abs (current1 - current2) < 0.000001f) {
+				Debug.Log ("In series");
+				UpdateHistory.appendToHistory ("Series Transform: \nR(" + value1.ToString() + ") & R(" + value2.ToString() +")\n");
+				GameObject secondResistorObject = GetResistorByID (secondID);
+				string location2 = secondResistorObject.GetComponent<ResistorScript> ().getLocation ();
+				string node0 = spiceResistorArray [Int32.Parse(secondID.Substring (1,secondID.Length-1))].GetNode (0);
+				string node1 = spiceResistorArray [Int32.Parse(secondID.Substring (1,secondID.Length-1))].GetNode (1);
+				if (string.Compare (node0.Substring(0,1), node1.Substring(0,1)) == 0) {
+					Debug.Log ("Horizontally connected");
+					string[] line = lineDictionary[node0.Substring (0, 1)];
+					Debug.Log (Int32.Parse (location2.Substring (1, location2.Length - 1)));
+					line [Int32.Parse (location2.Substring (1, location2.Length - 1))] = "Wh";
+					Debug.Log(string.Format ("Key = {0}, Value = {1}", "A", string.Join(".", line)));
+					lineDictionary [node0.Substring (0, 1)] = line;
+					string printString = "";
+					foreach (KeyValuePair<string, string[]> kvp in lineDictionary){
+						printString += string.Format ("Key = {0}, Value = {1}", kvp.Key, string.Join(".", kvp.Value));
+						printString += "\n";
+					}
+					Debug.Log (printString);
+					ClearAll ();
+					RenderCircuit ();
+					ConnectCircuit ();
+					BuildCircuit ();
+					PrintComponents ();
+					SimulateCircuit ();
+				}
+			} else {
+				Debug.Log ("Not in series");
+				UpdateFeedback.updateMessage ("Components are not in series");
+			}
+
 		} else {
 			UpdateFeedback.updateMessage ("Select two components first");
 		}

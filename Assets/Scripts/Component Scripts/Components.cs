@@ -71,6 +71,7 @@ public class Components : MonoBehaviour {
 		nodeList = new List <GameObject> ();
 		resistorList = new List <GameObject> ();
 		spiceResistorArray = new SpiceSharp.Components.Resistor[verticalGridSize*horizontalGridSize];
+		ResistorScript.selectedList.Clear ();
 	}
 
 	// Update is called once per frame
@@ -173,12 +174,12 @@ public class Components : MonoBehaviour {
 			Resistor spiceResistor1 = GetSpiceResistorByID (firstID);
 			Resistor spiceResistor2 = GetSpiceResistorByID (secondID);
 
-			double current1 = spiceResistor1.GetCurrent (ckt);
-			double current2 = spiceResistor2.GetCurrent (ckt);
+			double current1 = Math.Abs(spiceResistor1.GetCurrent (ckt));
+			double current2 = Math.Abs(spiceResistor2.GetCurrent (ckt));
 			double value1 = spiceResistor1.Ask ("resistance");
 			double value2 = spiceResistor2.Ask ("resistance");
-
-			if (Math.Abs (current1 - current2) < 0.000001f) {
+			Debug.Log ("current1: " + current1 + " current2: " + current2);
+			if (Math.Abs (current1 - current2) < 0.0000001f) {
 				Debug.Log ("In series");
 				UpdateHistory.appendToHistory ("Series Transform: \nR(" + value1.ToString() + ") & R(" + value2.ToString() +")\n");
 				GameObject secondResistorObject = GetResistorByID (secondID);
@@ -191,19 +192,20 @@ public class Components : MonoBehaviour {
 				string firstNode1 = spiceResistorArray [Int32.Parse(firstID.Substring (1,firstID.Length-1))].GetNode (1);
 				//If horizontally connected
 				if (string.Compare (secondNode0.Substring (0, 1), secondNode1.Substring (0, 1)) == 0) {
-					Debug.Log ("Horizontally connected");
+					Debug.Log ("Second resistor horizontally connected");
 					string[] secondLine = lineDictionary [location2.Substring (0, 1)];
-					string[] firstLine = lineDictionary [location1.Substring (0, 1)];
 					Debug.Log (Int32.Parse (location2.Substring (1, location2.Length - 1)));
 					secondLine [Int32.Parse (location2.Substring (1, location2.Length - 1))] = "Wh";
-					//First resistor is on same row
-					if (string.Compare (secondNode0.Substring (0, 1), secondNode1.Substring (0, 1)) == 0) {
-						firstLine [Int32.Parse (location1.Substring (1, location2.Length - 1))] = "Rh" + (value1 + value2).ToString ();
-					} else {
-						firstLine [Int32.Parse (location1.Substring (1, location2.Length - 1))] = "Rv" + (value1 + value2).ToString ();
-					}
-					Debug.Log (string.Format ("Key = {0}, Value = {1}", "A", string.Join (".", secondLine)));
 					lineDictionary [secondNode0.Substring (0, 1)] = secondLine;
+
+					string[] firstLine = lineDictionary [location1.Substring (0, 1)];
+					if (string.Compare (firstNode0.Substring (0, 1), firstNode1.Substring (0, 1)) == 0) {
+						firstLine [Int32.Parse (location1.Substring (1, location1.Length - 1))] = "Rh" + (value1 + value2).ToString ();
+					} else {
+						firstLine [Int32.Parse (location1.Substring (1, location1.Length - 1))] = "Rv" + (value1 + value2).ToString ();
+					}
+					lineDictionary [firstNode0.Substring (0, 1)] = firstLine;
+					Debug.Log (string.Format ("Key = {0}, Value = {1}", "(Unknown key)", string.Join (".", secondLine)));
 					string printString = "";
 					foreach (KeyValuePair<string, string[]> kvp in lineDictionary) {
 						printString += string.Format ("Key = {0}, Value = {1}", kvp.Key, string.Join (".", kvp.Value));
@@ -231,7 +233,89 @@ public class Components : MonoBehaviour {
 
 	public void checkTransformParallel(){
 		if (selectedComponentCount == 2) {
-			UpdateFeedback.updateMessage ("Components are not in parallel");
+			string firstID = ResistorScript.selectedList [0];
+			string secondID = ResistorScript.selectedList [1];
+			if (string.Compare (firstID, secondID) > 0) {
+				string temp = firstID;
+				firstID = secondID;
+				secondID = temp;
+			}
+
+			Resistor spiceResistor1 = GetSpiceResistorByID (firstID);
+			Resistor spiceResistor2 = GetSpiceResistorByID (secondID);
+
+			double voltage1 = Math.Abs (newData.GetVoltage (spiceResistor1.GetNode (0)) - newData.GetVoltage (spiceResistor1.GetNode (1)));
+			double voltage2 = Math.Abs (newData.GetVoltage (spiceResistor2.GetNode (0)) - newData.GetVoltage (spiceResistor2.GetNode (1)));
+			double value1 = spiceResistor1.Ask ("resistance");
+			double value2 = spiceResistor2.Ask ("resistance");
+
+			if (Math.Abs (voltage1 - voltage2) < 0.0000001f) {
+				Debug.Log ("In parallel");
+				UpdateHistory.appendToHistory ("Parallel Transform: \nR(" + value1.ToString() + ") & R(" + value2.ToString() +")\n");
+				GameObject secondResistorObject = GetResistorByID (secondID);
+				GameObject firstResistorObject = GetResistorByID (firstID);
+				string location2 = secondResistorObject.GetComponent<ResistorScript> ().getLocation ();
+				string location1 = firstResistorObject.GetComponent<ResistorScript> ().getLocation ();
+				Debug.Log ("Location 1 is: " + location1);
+				Debug.Log ("Location 2 is: " + location2);
+				string secondNode0 = spiceResistorArray [Int32.Parse(secondID.Substring (1,secondID.Length-1))].GetNode (0);
+				string secondNode1 = spiceResistorArray [Int32.Parse(secondID.Substring (1,secondID.Length-1))].GetNode (1);
+				string firstNode0 = spiceResistorArray [Int32.Parse(firstID.Substring (1,firstID.Length-1))].GetNode (0);
+				string firstNode1 = spiceResistorArray [Int32.Parse(firstID.Substring (1,firstID.Length-1))].GetNode (1);
+				//If horizontally connected
+				if (string.Compare (secondNode0.Substring (0, 1), secondNode1.Substring (0, 1)) == 0) {
+					Debug.Log ("Second resistor horizontally connected");
+					string[] secondLine = lineDictionary [location2.Substring (0, 1)];
+					secondLine [Int32.Parse (location2.Substring (1, location2.Length - 1))] = "x";
+					//Delete all horizontal wires to the right till a node or resistor
+					string horizontalWire = "Wh";
+					int currentIndex = Int32.Parse(location2.Substring (1, location2.Length - 1));
+					while (horizontalWire == "Wh" && currentIndex < (horizontalGridSize - 1)) {
+						horizontalWire = secondLine [currentIndex + 1];
+						if (horizontalWire == "Wh") {
+							secondLine [currentIndex + 1] = "x";
+						}
+						currentIndex++;
+					}
+					horizontalWire = "Wh";
+					currentIndex = Int32.Parse(location2.Substring (1, location2.Length - 1));
+					while (horizontalWire == "Wh" && currentIndex > 0) {
+						horizontalWire = secondLine [currentIndex - 1];
+						if (horizontalWire == "Wh") {
+							secondLine [currentIndex - 1] = "x";
+						}
+						currentIndex--;
+					}
+					lineDictionary [secondNode0.Substring (0, 1)] = secondLine;
+					string[] firstLine = lineDictionary [location1.Substring (0, 1)];
+					if (string.Compare (firstNode0.Substring (0, 1), firstNode1.Substring (0, 1)) == 0) {
+						firstLine [Int32.Parse (location1.Substring (1, location1.Length - 1))] = "Rh" + ((value1*value2)/(value1 + value2)).ToString ();
+					} else {
+						firstLine [Int32.Parse (location1.Substring (1, location1.Length - 1))] = "Rv" + ((value1*value2)/(value1 + value2)).ToString ();
+					}
+
+					string printString = "";
+					foreach (KeyValuePair<string, string[]> kvp in lineDictionary) {
+						printString += string.Format ("Key = {0}, Value = {1}", kvp.Key, string.Join (".", kvp.Value));
+						printString += "\n";
+					}
+					Debug.Log (printString);
+
+				} else {
+					Debug.Log ("Vertically connected");
+				}
+				ClearAll ();
+				RenderCircuit ();
+				ConnectCircuit ();
+				BuildCircuit ();
+				PrintComponents ();
+				SimulateCircuit ();
+			} else {
+				Debug.Log ("Not in parallel");
+				UpdateFeedback.updateMessage ("Components are not in parallel");
+			}
+
+
 		} else {
 			UpdateFeedback.updateMessage ("Select two components first");
 		}
@@ -438,13 +522,6 @@ public class Components : MonoBehaviour {
 		dc.OnExportSimulationData += (object sender, SimulationData data) =>
 		{
 			if (dc.Sweeps[0].CurrentValue == 1){
-				double vr0 = Math.Abs(data.GetVoltage(spiceResistorArray[0].GetNode(0)) - data.GetVoltage(spiceResistorArray[0].GetNode(1)));
-				double vr1 = Math.Abs(data.GetVoltage(spiceResistorArray[1].GetNode(0)) - data.GetVoltage(spiceResistorArray[1].GetNode(1)));
-				double vr2 = Math.Abs(data.GetVoltage(spiceResistorArray[2].GetNode(0)) - data.GetVoltage(spiceResistorArray[2].GetNode(1)));
-				//Debug.Log(r1.GetCurrent(ckt));
-				Debug.Log("Vr1 is: " + vr0);
-				Debug.Log("Vr2 is: " + vr1);
-				Debug.Log("Vr3 is: " + vr2);
 				newData = data;
 			}
 		};

@@ -44,9 +44,10 @@ public class Components : MonoBehaviour {
 		ClearAll ();
 		LoadCircuit ();
 
+		//RemoveUnusedWires ();
+
 		RenderCircuit ();
 		ConnectCircuit ();
-		//PrintComponents ();
 
 		BuildCircuit ();
 		SimulateCircuit ();
@@ -181,7 +182,7 @@ public class Components : MonoBehaviour {
 			Debug.Log ("current1: " + current1 + " current2: " + current2);
 			if (Math.Abs (current1 - current2) < 0.0000001f) {
 				Debug.Log ("In series");
-				UpdateHistory.appendToHistory ("Series Transform: \nR(" + value1.ToString() + ") & R(" + value2.ToString() +")\n");
+				UpdateHistory.appendToHistory ("Series Transform: \nR(" + String.Format("{0:0.00}",value1) + ") & R(" + String.Format("{0:0.00}",value2) +")\n");
 				GameObject secondResistorObject = GetResistorByID (secondID);
 				GameObject firstResistorObject = GetResistorByID (firstID);
 				string location2 = secondResistorObject.GetComponent<ResistorScript> ().getLocation ();
@@ -251,7 +252,7 @@ public class Components : MonoBehaviour {
 
 			if (Math.Abs (voltage1 - voltage2) < 0.0000001f) {
 				Debug.Log ("In parallel");
-				UpdateHistory.appendToHistory ("Parallel Transform: \nR(" + value1.ToString() + ") & R(" + value2.ToString() +")\n");
+				UpdateHistory.appendToHistory ("Parallel Transform: \nR(" + String.Format("{0:0.00}",value1) + ") & R(" + String.Format("{0:0.00}",value2) +")\n");
 				GameObject secondResistorObject = GetResistorByID (secondID);
 				GameObject firstResistorObject = GetResistorByID (firstID);
 				string location2 = secondResistorObject.GetComponent<ResistorScript> ().getLocation ();
@@ -263,37 +264,37 @@ public class Components : MonoBehaviour {
 				string firstNode0 = spiceResistorArray [Int32.Parse(firstID.Substring (1,firstID.Length-1))].GetNode (0);
 				string firstNode1 = spiceResistorArray [Int32.Parse(firstID.Substring (1,firstID.Length-1))].GetNode (1);
 				//If horizontally connected
-				if (string.Compare (secondNode0.Substring (0, 1), secondNode1.Substring (0, 1)) == 0) {
-					Debug.Log ("Second resistor horizontally connected");
-					string[] secondLine = lineDictionary [location2.Substring (0, 1)];
-					secondLine [Int32.Parse (location2.Substring (1, location2.Length - 1))] = "x";
+				if (string.Compare (firstNode0.Substring (0, 1), firstNode1.Substring (0, 1)) == 0) {
+					Debug.Log ("First resistor horizontally connected");
+					string[] firstLine = lineDictionary [location1.Substring (0, 1)];
+					firstLine [Int32.Parse (location1.Substring (1, location1.Length - 1))] = "x";
 					//Delete all horizontal wires to the right till a node or resistor
 					string horizontalWire = "Wh";
-					int currentIndex = Int32.Parse(location2.Substring (1, location2.Length - 1));
+					int currentIndex = Int32.Parse(location1.Substring (1, location1.Length - 1));
 					while (horizontalWire == "Wh" && currentIndex < (horizontalGridSize - 1)) {
-						horizontalWire = secondLine [currentIndex + 1];
+						horizontalWire = firstLine [currentIndex + 1];
 						if (horizontalWire == "Wh") {
-							secondLine [currentIndex + 1] = "x";
+							firstLine [currentIndex + 1] = "x";
 						}
 						currentIndex++;
 					}
 					horizontalWire = "Wh";
-					currentIndex = Int32.Parse(location2.Substring (1, location2.Length - 1));
+					currentIndex = Int32.Parse(location1.Substring (1, location1.Length - 1));
 					while (horizontalWire == "Wh" && currentIndex > 0) {
-						horizontalWire = secondLine [currentIndex - 1];
+						horizontalWire = firstLine [currentIndex - 1];
 						if (horizontalWire == "Wh") {
-							secondLine [currentIndex - 1] = "x";
+							firstLine [currentIndex - 1] = "x";
 						}
 						currentIndex--;
 					}
-					lineDictionary [secondNode0.Substring (0, 1)] = secondLine;
-					string[] firstLine = lineDictionary [location1.Substring (0, 1)];
-					if (string.Compare (firstNode0.Substring (0, 1), firstNode1.Substring (0, 1)) == 0) {
-						firstLine [Int32.Parse (location1.Substring (1, location1.Length - 1))] = "Rh" + ((value1*value2)/(value1 + value2)).ToString ();
+					lineDictionary [firstNode0.Substring (0, 1)] = firstLine;
+					string[] secondLine = lineDictionary [location2.Substring (0, 1)];
+					if (string.Compare (secondNode0.Substring (0, 1), secondNode1.Substring (0, 1)) == 0) {
+						secondLine [Int32.Parse (location2.Substring (1, location2.Length - 1))] = "Rh" + ((value1*value2)/(value1 + value2)).ToString ();
 					} else {
-						firstLine [Int32.Parse (location1.Substring (1, location1.Length - 1))] = "Rv" + ((value1*value2)/(value1 + value2)).ToString ();
+						secondLine [Int32.Parse (location2.Substring (1, location2.Length - 1))] = "Rv" + ((value1*value2)/(value1 + value2)).ToString ();
 					}
-
+					lineDictionary [secondNode0.Substring (0, 1)] = secondLine;
 					string printString = "";
 					foreach (KeyValuePair<string, string[]> kvp in lineDictionary) {
 						printString += string.Format ("Key = {0}, Value = {1}", kvp.Key, string.Join (".", kvp.Value));
@@ -304,6 +305,7 @@ public class Components : MonoBehaviour {
 				} else {
 					Debug.Log ("Vertically connected");
 				}
+				RemoveUnusedWires ();
 				ClearAll ();
 				RenderCircuit ();
 				ConnectCircuit ();
@@ -642,6 +644,12 @@ public class Components : MonoBehaviour {
 		return letterCharacter.ToString ();
 	}
 
+	private int ConvertLetterToIndex(string letter){
+		char letterCharacter = letter.ToCharArray () [0];
+		Debug.Log (((int)letterCharacter) - 65);
+		return ((int)letterCharacter) - 65;
+	}
+
 	private void MakeVerticalConnections(string location1, string location2, bool location1Lower){
 		Debug.Log ("Location 1 vertical is: " + location1);
 		Debug.Log ("Location 2 vertical is: " + location2);
@@ -952,6 +960,130 @@ public class Components : MonoBehaviour {
 		return spiceResistorArray[Int32.Parse(ID.Substring(1))];
 	}
 
+	private void RemoveUnusedWires(){
+		string[] unusedNodes = new string[horizontalGridSize * verticalGridSize];
+		string[] unusedNodesDirection = new string[horizontalGridSize * verticalGridSize];
+		int numberOfUnusedNodes = 0;
+		int rowIndex = 0;
+		int columnIndex = 0;
+		Debug.Log ("kjsadhkashkjdhkjdshkjdahkjdhkjhvkdhkfaksbjaskgkasgkf");
+		foreach (string[] line in lineDictionary.Values) {
+			foreach (string locationValue in line) {
+				if (locationValue == "N") {
+					int nodeConnections = 0;
+					string direction = "";
+					if (rowIndex > 0) {
+						if (CheckLocation (rowIndex-1, columnIndex)) {
+							nodeConnections++;
+							direction = "up";
+						}
+					}
+					if (columnIndex < (horizontalGridSize - 1)) {
+						if (CheckLocation (rowIndex, columnIndex + 1)) {
+							nodeConnections++;
+							direction = "right";
+						}
+					}
+					if (rowIndex < (verticalGridSize - 1)) {
+						if (CheckLocation (rowIndex + 1, columnIndex)) {
+							nodeConnections++;
+							direction = "down";
+						}
+					}
+					if (columnIndex > 0) {
+						if (CheckLocation(rowIndex,columnIndex - 1)){
+							nodeConnections++;
+							direction = "left";
+						}
+					}
+					string nodeLocation = ConvertIndexToLetter (rowIndex) + columnIndex;
+					string bottomLeftLocation = ConvertIndexToLetter (verticalGridSize - 1) + "0";
+					//Debug.Log ("Bottom left location is: " + bottomLeftLocation);
+					if (nodeConnections < 2 && nodeLocation != "A0" && nodeLocation != bottomLeftLocation) {
+						Debug.Log ("Node at location: " +  nodeLocation + " has only one connection");
+						unusedNodes [numberOfUnusedNodes] = nodeLocation;
+						unusedNodesDirection [numberOfUnusedNodes] = direction;
+						numberOfUnusedNodes++;
+					}
+				}
+				columnIndex++;
+			}
+			rowIndex++;
+			columnIndex = 0;
+		}
+
+		for (int i = 0; i < numberOfUnusedNodes; i++) {
+			DestroyConnections (unusedNodes [i], unusedNodesDirection [i]);
+		}
+		if (numberOfUnusedNodes > 0) {
+			RemoveUnusedWires ();
+		}
+	}
+
+	private bool CheckLocation(int rowIndex, int columnIndex){
+		string letter = ConvertIndexToLetter (rowIndex);
+		string[] line = lineDictionary [letter];
+		string locationValue = line [columnIndex];
+		if (locationValue != "x") {
+			return true;
+		}
+		return false;
+	}
+
+	private void DestroyConnections(string nodeLocation, string direction){
+		string letter = nodeLocation.Substring (0, 1);
+		string number = nodeLocation.Substring (1, nodeLocation.Length - 1);
+		Debug.Log ("Number is: " + number + " Letter is: " + letter);
+		string[] line = lineDictionary [letter];
+		line [Int32.Parse(number)] = "x";
+		lineDictionary [letter] = line;
+
+		if (direction == "up" && string.Compare(letter, "A") != 0) {
+			int numberedLetter = ConvertLetterToIndex(letter);
+			string newLetter = ConvertIndexToLetter (numberedLetter - 1);
+			string [] newLine = lineDictionary [newLetter];
+
+			while (numberedLetter > 0 && string.Compare(newLine[Int32.Parse(number)],"Wv") == 0) {
+				newLine [Int32.Parse(number)] = "x";
+				lineDictionary [newLetter] = newLine;
+
+				numberedLetter--;
+				newLetter = ConvertIndexToLetter (numberedLetter);
+				newLine = lineDictionary [newLetter];
+			}
+
+		} else if (direction == "right" && Int32.Parse(number) < (horizontalGridSize - 1)){
+			int columnNumber = Int32.Parse (number) + 1;
+
+			while (columnNumber < (horizontalGridSize - 1) && line [columnNumber] == "Wh") {
+				line [columnNumber] = "x";
+				columnNumber++;
+			}
+			lineDictionary [letter] = line;
+		
+		} else if (direction == "down" && string.Compare(letter, ConvertIndexToLetter(verticalGridSize-1)) != 0) {
+			int numberedLetter = ConvertLetterToIndex(letter);
+			string newLetter = ConvertIndexToLetter (numberedLetter + 1);
+			string [] newLine = lineDictionary [newLetter];
+
+			while (numberedLetter < (verticalGridSize - 1) && string.Compare(newLine[Int32.Parse(number)],"Wv") == 0) {
+				newLine [Int32.Parse(number)] = "x";
+				lineDictionary [newLetter] = newLine;
+
+				numberedLetter++;
+				newLetter = ConvertIndexToLetter (numberedLetter);
+				newLine = lineDictionary [newLetter];
+			}
+		} else if (direction == "left" && Int32.Parse(number) > 0) {
+			int columnNumber = Int32.Parse (number) - 1;
+
+			while (columnNumber >= 0 && line [columnNumber] == "Wh") {
+				line [columnNumber] = "x";
+				columnNumber--;
+			}
+			lineDictionary [letter] = line;
+		}
+	}
 }
 
 /*

@@ -86,7 +86,7 @@ public class ResistorScript : MonoBehaviour {
 
 	public void setValue(float value){
 		this.value = value;
-		textObject.GetComponent<Text> ().text = value.ToString();
+		textObject.GetComponent<Text> ().text = string.Format("{0:0.00}", value);
 	}
 
 	public float getValue(){

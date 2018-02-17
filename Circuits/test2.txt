@@ -3,6 +3,6 @@
 //Resistors must be connected with intermitent wires AND nodes
 N,Wh,Rh12,Wh,N,Wh,Rh11,Wh,N
 x,x,x,x,x,x,x,x,Wv
-N,Wh,N,Wh,Rh16,Wh,N,Wh,N
+x,x,N,Wh,Rh16,Wh,N,Wh,N
 x,x,Wv,x,x,x,x,x,Wv
 N,Wh,N,Wh,Rh19,Wh,Wh,Wh,N

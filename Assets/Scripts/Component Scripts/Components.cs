@@ -25,8 +25,8 @@ public class Components : MonoBehaviour {
 	private Resistor r1;
 	private Resistor r2;
 	Dictionary<string,string[]> lineDictionary = new Dictionary<string,string[]>();
-	private int verticalGridSize = 5;
-	private int horizontalGridSize = 9;
+	private int verticalGridSize = 0;
+	private int horizontalGridSize = 0;
 	private int numberOfNodes = 0;
 	private int numberOfResistors = 0;
 	private int numberOfWires = 0;
@@ -41,8 +41,8 @@ public class Components : MonoBehaviour {
 	void Start () {
 		paused = false;
 
-		ClearAll ();
 		LoadCircuit ();
+		ClearAll ();
 
 		//RemoveUnusedWires ();
 
@@ -249,7 +249,7 @@ public class Components : MonoBehaviour {
 			double voltage2 = Math.Abs (newData.GetVoltage (spiceResistor2.GetNode (0)) - newData.GetVoltage (spiceResistor2.GetNode (1)));
 			double value1 = spiceResistor1.Ask ("resistance");
 			double value2 = spiceResistor2.Ask ("resistance");
-
+			Debug.Log ("Voltage1: " + voltage1 + " Voltage 2: " + voltage2);
 			if (Math.Abs (voltage1 - voltage2) < 0.0000001f) {
 				Debug.Log ("In parallel");
 				UpdateHistory.appendToHistory ("Parallel Transform: \nR(" + String.Format("{0:0.00}",value1) + ") & R(" + String.Format("{0:0.00}",value2) +")\n");
@@ -331,66 +331,32 @@ public class Components : MonoBehaviour {
 			if (circuitLine.StartsWith("//")){
 				circuitLine = reader.ReadLine ();
 			}else{
+				verticalGridSize++;
 				Debug.Log (circuitLine);
 				char letterChar = (char)count;
 				string letter = letterChar.ToString ();
 				count++;
 				string[] circuitLineArray = circuitLine.Split (',');
+				horizontalGridSize = circuitLineArray.Length;
 				lineDictionary.Add(letter, circuitLineArray);
 				circuitLine = reader.ReadLine ();
 			}
 		}
 		reader.Close ();
+		Debug.Log ("verticalGridSize: " + verticalGridSize + " horizontalGridSize: " + horizontalGridSize);
 	}
 
 	private void RenderCircuit(){
 		Debug.Log ("Render Circuit");
 		foreach (KeyValuePair<string, string[]> kvp in lineDictionary){
-			switch (kvp.Key) {
-			case "A":
-				Debug.Log ("Its A");
-				drawCircuit (kvp, 0.85f,0);
-				break;
-			case "B":
-				Debug.Log ("Its B");
-				drawCircuit (kvp, 0.85f - 0.8f / (verticalGridSize - 1),1);
-				break;
-			case "C":
-				Debug.Log ("Its C");
-				drawCircuit (kvp, 0.85f - 0.8f * 2 / (verticalGridSize - 1),2);
-				break;
-			case "D":
-				Debug.Log ("Its D");
-				drawCircuit (kvp, 0.85f - 0.8f * 3 / (verticalGridSize - 1),3);
-				break;
-			case "E":
-				Debug.Log ("Its E");
-				drawCircuit (kvp, 0.85f - 0.8f * 4 / (verticalGridSize - 1),4);
-				break;
-			}
+			drawCircuit(kvp,0.85f - 0.8f * ConvertLetterToIndex(kvp.Key) / (verticalGridSize - 1), ConvertLetterToIndex(kvp.Key));
 		}
 	}
 
 	private void ConnectCircuit(){
 		Debug.Log ("ConnectCircuit");
 		foreach (KeyValuePair<string, string[]> kvp in lineDictionary) {
-			switch (kvp.Key) {
-			case "A":
-				ConnectWires (kvp, 0);
-				break;
-			case "B":
-				ConnectWires (kvp, 1);
-				break;
-			case "C":
-				ConnectWires (kvp, 2);
-				break;
-			case "D":
-				ConnectWires (kvp, 3);
-				break;
-			case "E":
-				ConnectWires (kvp, 4);
-				break;
-			}
+			ConnectWires (kvp, ConvertLetterToIndex (kvp.Key));
 		}
 	}
 
@@ -425,12 +391,18 @@ public class Components : MonoBehaviour {
 					int newRow = row + 1;
 					string letterString = ConvertIndexToLetter (newRow);
 					string[] newLineComponents = lineDictionary [letterString];
+					bool wentInLoop = false;
 					while (newLineComponents [x] == "Wv") {
+						wentInLoop = true;
 						connected [newRow, x] = true;
 						string letter = ConvertIndexToLetter (newRow);
 						newRow++;
 						newLineComponents = lineDictionary [letter];
 					}
+					if (wentInLoop) {
+						newRow--;
+					}
+					Debug.Log("newRow is: "+ newRow);
 					location2 = ConvertIndexToLetter (newRow) + x.ToString ();
 					MakeVerticalConnections (location1, location2, true);
 					connected [row, x] = true;
@@ -473,7 +445,8 @@ public class Components : MonoBehaviour {
 					}
 					float minX = x * 0.9f / horizontalGridSize - 0.05f;
 					float maxX = newX * 0.9f / horizontalGridSize + 0.05f;
-					createWire ("W" + numberOfWires.ToString (), minX, maxX, verticalHeight, verticalHeight, (maxX - minX) * 10f, false);
+					Debug.Log ("horizontalGridSize is: " + horizontalGridSize);
+					createWire ("W" + numberOfWires.ToString (), minX, maxX, verticalHeight, verticalHeight, (maxX - minX) * 10.0f / (horizontalGridSize/9.0f), false);
 					numberOfWires++;
 					rendered [row, x] = true;
 				}
@@ -496,7 +469,7 @@ public class Components : MonoBehaviour {
 					float minY = (verticalGridSize - newRow - 1) * 0.2f + 0.05f;
 					Debug.Log ("maxY is: " + maxY);
 					Debug.Log ("minY is: " + minY);
-					createWire ("W" + numberOfWires.ToString (), minX, minX, minY, maxY, (maxY - minY) * 10f, true);
+					createWire ("W" + numberOfWires.ToString (), minX, minX, minY, maxY, (maxY - minY) * 10.0f / (verticalGridSize/5.0f), true);
 					numberOfWires++;
 					rendered [row, x] = true;
 				}

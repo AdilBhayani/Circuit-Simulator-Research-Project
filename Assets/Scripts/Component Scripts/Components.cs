@@ -939,7 +939,7 @@ public class Components : MonoBehaviour {
 		int numberOfUnusedNodes = 0;
 		int rowIndex = 0;
 		int columnIndex = 0;
-		Debug.Log ("kjsadhkashkjdhkjdshkjdahkjdhkjhvkdhkfaksbjaskgkasgkf");
+		Debug.Log ("RemoveUnusedWires");
 		foreach (string[] line in lineDictionary.Values) {
 			foreach (string locationValue in line) {
 				if (locationValue == "N") {
@@ -976,6 +976,7 @@ public class Components : MonoBehaviour {
 						Debug.Log ("Node at location: " +  nodeLocation + " has only one connection");
 						unusedNodes [numberOfUnusedNodes] = nodeLocation;
 						unusedNodesDirection [numberOfUnusedNodes] = direction;
+						Debug.Log ("Direction is: " + direction);
 						numberOfUnusedNodes++;
 					}
 				}
@@ -1012,8 +1013,8 @@ public class Components : MonoBehaviour {
 		lineDictionary [letter] = line;
 
 		if (direction == "up" && string.Compare(letter, "A") != 0) {
-			int numberedLetter = ConvertLetterToIndex(letter);
-			string newLetter = ConvertIndexToLetter (numberedLetter - 1);
+			int numberedLetter = ConvertLetterToIndex(letter) - 1;
+			string newLetter = ConvertIndexToLetter (numberedLetter);
 			string [] newLine = lineDictionary [newLetter];
 
 			while (numberedLetter > 0 && string.Compare(newLine[Int32.Parse(number)],"Wv") == 0) {
@@ -1035,11 +1036,14 @@ public class Components : MonoBehaviour {
 			lineDictionary [letter] = line;
 		
 		} else if (direction == "down" && string.Compare(letter, ConvertIndexToLetter(verticalGridSize-1)) != 0) {
-			int numberedLetter = ConvertLetterToIndex(letter);
-			string newLetter = ConvertIndexToLetter (numberedLetter + 1);
+			int numberedLetter = ConvertLetterToIndex(letter) + 1;
+			string newLetter = ConvertIndexToLetter (numberedLetter);
 			string [] newLine = lineDictionary [newLetter];
-
+			Debug.Log ("newLetter is: " + newLetter);
+			Debug.Log("numberedLetter is: " + numberedLetter.ToString());
+			Debug.Log ("Inside else if of direction down");
 			while (numberedLetter < (verticalGridSize - 1) && string.Compare(newLine[Int32.Parse(number)],"Wv") == 0) {
+				Debug.Log ("Inside while loop");
 				newLine [Int32.Parse(number)] = "x";
 				lineDictionary [newLetter] = newLine;
 

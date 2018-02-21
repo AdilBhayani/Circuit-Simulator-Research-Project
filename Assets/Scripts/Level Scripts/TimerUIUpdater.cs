@@ -18,6 +18,9 @@ public class TimerUIUpdater : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+		if (Components.getPaused ()) {
+			running = false;
+		}
 		if (running) {
 			if (currentTime < 0.0f) {
 				UpdateFeedback.UpdateMessage ("Game Over! You ran out of time", true);

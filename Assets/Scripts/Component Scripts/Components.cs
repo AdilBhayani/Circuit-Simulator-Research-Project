@@ -13,7 +13,8 @@ public class Components : MonoBehaviour {
 	public GameObject Node;
 	public GameObject WireHorizontal;
 	public GameObject WireVertical;
-	public GameObject Resistor;
+	public GameObject ResistorHorizontal;
+	public GameObject ResistorVertical;
 	public Transform circuitPanel;
 	public Text stageTitleText;
 	private static int selectedComponentCount;
@@ -172,8 +173,14 @@ public class Components : MonoBehaviour {
 		componentCount++;
 	}
 
-	private void createResistor(string ID, float anchorX, float anchorY, float value, string location){
-		GameObject newResistor = (GameObject)Instantiate (Resistor, new Vector3 (0, 0, 0), Quaternion.identity);
+	private void createResistor(string ID, float anchorX, float anchorY, float value, string location, bool vertical){
+		GameObject newResistor;
+		if (!vertical) {
+			newResistor = (GameObject)Instantiate (ResistorHorizontal, new Vector3 (0, 0, 0), Quaternion.identity);
+		} else {
+			newResistor = (GameObject)Instantiate(ResistorVertical, new Vector3 (0, 0, 0), Quaternion.identity);
+			newResistor.GetComponent<ResistorScript> ().SetVertical (true);
+		}
 		newResistor = setPosition(newResistor, ID, anchorX, anchorX, anchorY, anchorY);
 		newResistor.GetComponent<ResistorScript> ().setID (ID);
 		newResistor.GetComponent<ResistorScript> ().setValue (value);
@@ -245,13 +252,18 @@ public class Components : MonoBehaviour {
 				string secondNode1 = spiceResistorArray [Int32.Parse(secondID.Substring (1,secondID.Length-1))].GetNode (1);
 				string firstNode0 = spiceResistorArray [Int32.Parse(firstID.Substring (1,firstID.Length-1))].GetNode (0);
 				string firstNode1 = spiceResistorArray [Int32.Parse(firstID.Substring (1,firstID.Length-1))].GetNode (1);
+				string printString = "";
+				foreach (KeyValuePair<string, string[]> kvp in lineDictionary) {
+					printString += string.Format ("Key = {0}, Value = {1}", kvp.Key, string.Join (".", kvp.Value));
+					printString += "\n";
+				}
+				Debug.Log (printString);
 				//If horizontally connected
 				if (string.Compare (secondNode0.Substring (0, 1), secondNode1.Substring (0, 1)) == 0) {
 					Debug.Log ("Second resistor horizontally connected");
 					string[] secondLine = lineDictionary [location2.Substring (0, 1)];
 					Debug.Log (Int32.Parse (location2.Substring (1, location2.Length - 1)));
 					secondLine [Int32.Parse (location2.Substring (1, location2.Length - 1))] = "Wh";
-					lineDictionary [secondNode0.Substring (0, 1)] = secondLine;
 
 					string[] firstLine = lineDictionary [location1.Substring (0, 1)];
 					if (string.Compare (firstNode0.Substring (0, 1), firstNode1.Substring (0, 1)) == 0) {
@@ -259,17 +271,25 @@ public class Components : MonoBehaviour {
 					} else {
 						firstLine [Int32.Parse (location1.Substring (1, location1.Length - 1))] = "Rv" + (value1 + value2).ToString ();
 					}
-					lineDictionary [firstNode0.Substring (0, 1)] = firstLine;
-					Debug.Log (string.Format ("Key = {0}, Value = {1}", "(Unknown key)", string.Join (".", secondLine)));
-					string printString = "";
-					foreach (KeyValuePair<string, string[]> kvp in lineDictionary) {
-						printString += string.Format ("Key = {0}, Value = {1}", kvp.Key, string.Join (".", kvp.Value));
-						printString += "\n";
-					}
-					Debug.Log (printString);
 				} else {
 					//Code for vertically connected resistors here.
+					Debug.Log ("Second resistor horizontally connected");
+					string[] secondLine = lineDictionary [location2.Substring (0, 1)];
+					Debug.Log (Int32.Parse (location2.Substring (1, location2.Length - 1)));
+					secondLine [Int32.Parse (location2.Substring (1, location2.Length - 1))] = "Wv";
+					string[] firstLine = lineDictionary [location1.Substring (0, 1)];
+					if (string.Compare (firstNode0.Substring (0, 1), firstNode1.Substring (0, 1)) == 0) {
+						firstLine [Int32.Parse (location1.Substring (1, location1.Length - 1))] = "Rh" + (value1 + value2).ToString ();
+					} else {
+						firstLine [Int32.Parse (location1.Substring (1, location1.Length - 1))] = "Rv" + (value1 + value2).ToString ();
+					}
 				}
+				printString = "";
+				foreach (KeyValuePair<string, string[]> kvp in lineDictionary) {
+					printString += string.Format ("Key = {0}, Value = {1}", kvp.Key, string.Join (".", kvp.Value));
+					printString += "\n";
+				}
+				Debug.Log (printString);
 				ClearAll ();
 				RenderCircuit ();
 				ConnectCircuit ();
@@ -345,14 +365,14 @@ public class Components : MonoBehaviour {
 						}
 						currentIndex--;
 					}
-					lineDictionary [firstNode0.Substring (0, 1)] = firstLine;
+					//lineDictionary [firstNode0.Substring (0, 1)] = firstLine;
 					string[] secondLine = lineDictionary [location2.Substring (0, 1)];
 					if (string.Compare (secondNode0.Substring (0, 1), secondNode1.Substring (0, 1)) == 0) {
 						secondLine [Int32.Parse (location2.Substring (1, location2.Length - 1))] = "Rh" + ((value1*value2)/(value1 + value2)).ToString ();
 					} else {
 						secondLine [Int32.Parse (location2.Substring (1, location2.Length - 1))] = "Rv" + ((value1*value2)/(value1 + value2)).ToString ();
 					}
-					lineDictionary [secondNode0.Substring (0, 1)] = secondLine;
+					//lineDictionary [secondNode0.Substring (0, 1)] = secondLine;
 					string printString = "";
 					foreach (KeyValuePair<string, string[]> kvp in lineDictionary) {
 						printString += string.Format ("Key = {0}, Value = {1}", kvp.Key, string.Join (".", kvp.Value));
@@ -550,7 +570,11 @@ public class Components : MonoBehaviour {
 					string resistorLocation = ConvertIndexToLetter (row) + x.ToString ();
 					Debug.Log (resistance.ToString());	
 					Debug.Log (resistorLocation);
-					createResistor ("R" + numberOfResistors.ToString (), x * 0.8f / (horizontalGridSize - 1) + 0.05f, verticalHeight,resistance, resistorLocation);
+					if (lineComponents [x].StartsWith ("Rh")) {
+						createResistor ("R" + numberOfResistors.ToString (), x * 0.8f / (horizontalGridSize - 1) + 0.05f, verticalHeight, resistance, resistorLocation, false);
+					} else {
+						createResistor ("R" + numberOfResistors.ToString (), x * 0.8f / (horizontalGridSize - 1) + 0.05f, verticalHeight, resistance, resistorLocation, true);
+					}
 					numberOfResistors++;
 				}
 				break;
@@ -611,31 +635,58 @@ public class Components : MonoBehaviour {
 				string resistorObjectLocation = resistorObjectScript.getLocation ();
 				string resistorObjectLeft = resistorObjectScript.getIDLeft ();
 				string resistorObjectRight = resistorObjectScript.getIDRight ();
+				string resistorObjectUp = resistorObjectScript.getIDUp();
+				string resistorObjectDown = resistorObjectScript.getIDDown ();
 				float resistorvalue = resistorObjectScript.getValue ();
+				bool resistorVertical = resistorObjectScript.getVertical ();
 
 				string objectLeftLocation = null;
 				string objectRightLocation = null;
+				string objectUpLocation = null;
+				string objectDownLocation = null;
 
-				if (resistorObjectLeft.StartsWith("R")){
-					GameObject leftResistorObject =  GetResistorByID (resistorObjectLeft);
-					objectLeftLocation = leftResistorObject.GetComponent<ResistorScript> ().getLocation ();
-				}else{
-					GameObject leftNodeObject =  GetNodeByID (resistorObjectLeft);
-					objectLeftLocation = leftNodeObject.GetComponent<NodeScript> ().getLocation ();
-				}
+				if (!resistorVertical) {
+					if (resistorObjectLeft.StartsWith ("R")) {
+						GameObject leftResistorObject = GetResistorByID (resistorObjectLeft);
+						objectLeftLocation = leftResistorObject.GetComponent<ResistorScript> ().getLocation ();
+					} else {
+						GameObject leftNodeObject = GetNodeByID (resistorObjectLeft);
+						objectLeftLocation = leftNodeObject.GetComponent<NodeScript> ().getLocation ();
+					}
 
-				if (resistorObjectRight.StartsWith("R")){
-					GameObject rightResistorObject =  GetResistorByID (resistorObjectRight);
-					objectRightLocation = rightResistorObject.GetComponent<ResistorScript> ().getLocation ();
-				}else{
-					GameObject rightNodeObject =  GetNodeByID (resistorObjectRight);
-					objectRightLocation = rightNodeObject.GetComponent<NodeScript> ().getLocation ();
+					if (resistorObjectRight.StartsWith ("R")) {
+						GameObject rightResistorObject = GetResistorByID (resistorObjectRight);
+						objectRightLocation = rightResistorObject.GetComponent<ResistorScript> ().getLocation ();
+					} else {
+						GameObject rightNodeObject = GetNodeByID (resistorObjectRight);
+						objectRightLocation = rightNodeObject.GetComponent<NodeScript> ().getLocation ();
+					}
+				} else {
+					if (resistorObjectUp.StartsWith ("R")) {
+						GameObject upResistorObject = GetResistorByID (resistorObjectUp);
+						objectUpLocation = upResistorObject.GetComponent<ResistorScript> ().getLocation ();
+					} else {
+						GameObject upNodeObject = GetNodeByID (resistorObjectUp);
+						objectUpLocation = upNodeObject.GetComponent<NodeScript> ().getLocation ();
+					}
+
+					if (resistorObjectDown.StartsWith ("R")) {
+						GameObject downResistorObject = GetResistorByID (resistorObjectDown);
+						objectDownLocation = downResistorObject.GetComponent<ResistorScript> ().getLocation ();
+					} else {
+						GameObject downNodeObject = GetNodeByID (resistorObjectDown);
+						objectDownLocation = downNodeObject.GetComponent<NodeScript> ().getLocation ();
+					}
 				}
 				 
 				Debug.Log ("objectLeftLocation is: " + objectLeftLocation);
 				Debug.Log ("objectRightLocation is: " + objectRightLocation);
 				Debug.Log ("ID: " + resistorObjectID + ", Left: " + resistorObjectLeft + ", Right: " + resistorObjectRight + ", Value: " + resistorvalue);
-				ckt.Objects.Add (spiceResistorArray [spiceResistorArrayCount] = new Resistor (resistorObjectID, objectLeftLocation, objectRightLocation, resistorvalue));
+				if (!resistorVertical) {
+					ckt.Objects.Add (spiceResistorArray [spiceResistorArrayCount] = new Resistor (resistorObjectID, objectLeftLocation, objectRightLocation, resistorvalue));
+				} else {
+					ckt.Objects.Add (spiceResistorArray [spiceResistorArrayCount] = new Resistor (resistorObjectID, objectUpLocation, objectDownLocation, resistorvalue));
+				}
 				spiceResistorArrayCount++;
 			}
 		}

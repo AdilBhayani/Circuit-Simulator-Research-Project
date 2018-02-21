@@ -3112,7 +3112,10 @@ MonoBehaviour:
     type: 2}
   WireVertical: {fileID: 1862556361164218, guid: 40be4945ddd2b42479e83bb584a5346f,
     type: 2}
-  Resistor: {fileID: 1231107963815144, guid: 01cdc716a6fd54543aff295ff46cdbcf, type: 2}
+  ResistorHorizontal: {fileID: 1231107963815144, guid: 01cdc716a6fd54543aff295ff46cdbcf,
+    type: 2}
+  ResistorVertical: {fileID: 1449936785350080, guid: 65088c32c0af30443a2c9595aa4122bd,
+    type: 2}
   circuitPanel: {fileID: 1693797325}
   stageTitleText: {fileID: 419221710}
 --- !u!114 &1693797327

@@ -544,7 +544,7 @@ public class Components : MonoBehaviour {
 		ckt = new Circuit();
 		ckt.Objects.Add( 
 			new Voltagesource("V1", "A0", "GND", 1.0),
-			new Resistor ("Vx0", "E0", "GND", wireResistance)
+			new Resistor ("Vx0", ConvertIndexToLetter(verticalGridSize-1)+ "0", "GND", wireResistance)
 		);
 
 		foreach (GameObject resistorObject in resistorList) {

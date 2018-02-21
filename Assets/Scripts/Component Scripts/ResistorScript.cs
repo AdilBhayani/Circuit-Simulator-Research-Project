@@ -55,7 +55,7 @@ public class ResistorScript : MonoBehaviour {
 					selected = true;
 					selectedList.Add (ID);
 				} else {
-					UpdateFeedback.updateMessage ("Select only two components");
+					UpdateFeedback.UpdateMessage ("Select only two components");
 				}
 			}
 		}

@@ -8,40 +8,48 @@ public class UpdateFeedback : MonoBehaviour {
 	private static bool messageUpdated;
 	private float timer;
 	public Text textObject;
+	private static bool indefinite;
 
 	// Use this for initialization
 	void Start () {
+		indefinite = false;
 		message = "Find the equivalent resistance";
 		messageUpdated = false;
-		resetTimer ();
+		ResetTimer ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (message != "") {
+		if (message != "" && !indefinite) {
 			timer -= Time.deltaTime;
 		}
 		if (timer <= 0) {
 			message = "";
-			updateUiMessage ();
+			UpdateUiMessage ();
 		}
 		if (messageUpdated) {
-			updateUiMessage ();
+			UpdateUiMessage ();
 			messageUpdated = false;
 		}
 	}
 
-	private void updateUiMessage(){
+	private void UpdateUiMessage(){
 		textObject.text = message;
-		resetTimer ();
+		ResetTimer ();
 	}
 
-	public static void updateMessage(string newMessage){
+	public static void UpdateMessage(string newMessage){
 		message = newMessage;
 		messageUpdated = true;
 	}
 
-	private void resetTimer(){
+	public static void UpdateMessage(string newMessage, bool endless){
+		message = newMessage;
+		messageUpdated = true;
+		indefinite = endless;
+	}
+
+	private void ResetTimer(){
 		timer = 5f;
 	}
 }

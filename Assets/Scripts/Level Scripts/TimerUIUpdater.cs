@@ -19,6 +19,11 @@ public class TimerUIUpdater : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (running) {
+			if (currentTime < 0.0f) {
+				UpdateFeedback.UpdateMessage ("Game Over! You ran out of time", true);
+				running = false;
+				Components.setPaused (true);
+			}
 			currentTime -= Time.deltaTime;
 			minutes = (int)currentTime / 60;
 			seconds = (int)currentTime - minutes * 60;
@@ -36,5 +41,9 @@ public class TimerUIUpdater : MonoBehaviour {
 
 	public static void ResumeTimer(){
 		running = true;
+	}
+
+	public static void IncreaseTime(){
+		currentTime += 5.0f;
 	}
 }

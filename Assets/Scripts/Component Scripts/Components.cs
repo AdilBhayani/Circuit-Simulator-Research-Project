@@ -65,7 +65,7 @@ public class Components : MonoBehaviour {
 		if (stageNumber < numberOfStages) {
 			EfxUpdater.playLevelSwitchSoundStatic ();
 		} else {
-			UpdateFeedback.updateMessage ("Final stage reached!");
+			UpdateFeedback.UpdateMessage ("Final stage reached!");
 		}
 
 	}
@@ -88,10 +88,12 @@ public class Components : MonoBehaviour {
 				SimulateCircuit ();
 				UpdateHistory.clearHistory ();
 				EfxUpdater.playLevelSwitchSoundStatic ();
-				ScoreManager.IncreaseScore ((int) (TimerUIUpdater.currentTime * 5));
+				ScoreManager.IncreaseScore ((int) (TimerUIUpdater.currentTime * 5) + 100);
+				UpdateFeedback.UpdateMessage ("");
+				TimerUIUpdater.IncreaseTime ();
 			} else if (!gameFinished) {
-				ScoreManager.IncreaseScore ((int) (TimerUIUpdater.currentTime * 5));
-				UpdateFeedback.updateMessage ("Congrats you have passed all stages!!");
+				ScoreManager.IncreaseScore ((int) (TimerUIUpdater.currentTime * 5) + 100);
+				UpdateFeedback.UpdateMessage ("Congrats you have passed all stages!!", true);
 				TimerUIUpdater.StopTimer ();
 				gameFinished = true;
 			}
@@ -212,7 +214,7 @@ public class Components : MonoBehaviour {
 	}
 
 	public void checkTransformSeries(){
-		if (selectedComponentCount == 2) {
+		if (selectedComponentCount == 2 && !paused) {
 			string firstID = ResistorScript.selectedList [0];
 			string secondID = ResistorScript.selectedList [1];
 			if (string.Compare (firstID, secondID) > 0) {
@@ -231,7 +233,9 @@ public class Components : MonoBehaviour {
 			Debug.Log ("current1: " + current1 + " current2: " + current2);
 			if (Math.Abs (current1 - current2) < 0.0000001f) {
 				Debug.Log ("In series");
-				ScoreManager.IncreaseScore (100);
+				if (numberOfResistors != 2) {
+					ScoreManager.IncreaseScore (100);
+				}
 				UpdateHistory.appendToHistory ("Series Transform: \nR(" + String.Format("{0:0.00}",value1) + ") & R(" + String.Format("{0:0.00}",value2) +")\n");
 				GameObject secondResistorObject = GetResistorByID (secondID);
 				GameObject firstResistorObject = GetResistorByID (firstID);
@@ -274,16 +278,17 @@ public class Components : MonoBehaviour {
 				SimulateCircuit ();
 			} else {
 				Debug.Log ("Not in series");
-				UpdateFeedback.updateMessage ("Components are not in series");
+				UpdateFeedback.UpdateMessage ("Components are not in series");
+				LivesManager.DecreaseLives ();
 			}
 
 		} else {
-			UpdateFeedback.updateMessage ("Select two components first");
+			UpdateFeedback.UpdateMessage ("Select two components first");
 		}
 	}
 
 	public void checkTransformParallel(){
-		if (selectedComponentCount == 2) {
+		if (selectedComponentCount == 2 && !paused) {
 			string firstID = ResistorScript.selectedList [0];
 			string secondID = ResistorScript.selectedList [1];
 			if (string.Compare (firstID, secondID) > 0) {
@@ -302,7 +307,9 @@ public class Components : MonoBehaviour {
 			Debug.Log ("Voltage1: " + voltage1 + " Voltage 2: " + voltage2);
 			if (Math.Abs (voltage1 - voltage2) < 0.0000001f) {
 				Debug.Log ("In parallel");
-				ScoreManager.IncreaseScore (100);
+				if (numberOfResistors != 2) {
+					ScoreManager.IncreaseScore (100);
+				}
 				UpdateHistory.appendToHistory ("Parallel Transform: \nR(" + String.Format("{0:0.00}",value1) + ") & R(" + String.Format("{0:0.00}",value2) +")\n");
 				GameObject secondResistorObject = GetResistorByID (secondID);
 				GameObject firstResistorObject = GetResistorByID (firstID);
@@ -365,12 +372,13 @@ public class Components : MonoBehaviour {
 				SimulateCircuit ();
 			} else {
 				Debug.Log ("Not in parallel");
-				UpdateFeedback.updateMessage ("Components are not in parallel");
+				UpdateFeedback.UpdateMessage ("Components are not in parallel");
+				LivesManager.DecreaseLives ();
 			}
 
 
 		} else {
-			UpdateFeedback.updateMessage ("Select two components first");
+			UpdateFeedback.UpdateMessage ("Select two components first");
 		}
 	}
 

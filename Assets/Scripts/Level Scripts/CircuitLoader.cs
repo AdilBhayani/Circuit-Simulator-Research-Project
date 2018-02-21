@@ -15,11 +15,18 @@ public class CircuitLoader : MonoBehaviour {
 		
 	}
 
-	public static StreamReader ReadString()
+	public static StreamReader ReadString(string currentStage)
 	{
-		string path = "Circuits/test.txt";
+		string path = "Circuits/" + currentStage + ".txt";
 		//Read the text from directly from the test.txt file
 		StreamReader reader = new StreamReader(path); 
 		return reader;
+	}
+
+	public static int GetNumberOfStages(){
+		string path = "Circuits/";
+		string pattern = "stage*.txt";
+		string[] stages = Directory.GetFiles(path,pattern);
+		return stages.Length;
 	}
 }

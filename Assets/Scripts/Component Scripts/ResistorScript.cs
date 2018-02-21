@@ -29,15 +29,16 @@ public class ResistorScript : MonoBehaviour {
 		
 	// Update is called once per frame
 	void Update () {
-		if (Components.getPaused ()) {
-			spirit.color = new Vector4 (spirit.color.r, spirit.color.g, spirit.color.b, 0.3f);
-		} else {
-			spirit.color = new Vector4 (spirit.color.r, spirit.color.g, spirit.color.b, 1f);
-		}
 		if (Components.getSelectedComponentCount() == 0){
 			spirit.color = Color.white;
 			selected = false;
 		}
+		if (Components.getPaused ()) {
+			spirit.color = new Vector4 (spirit.color.r, spirit.color.g, spirit.color.b, 0.25f);
+		} else {
+			spirit.color = new Vector4 (spirit.color.r, spirit.color.g, spirit.color.b, 1f);
+		}
+
 	}
 
 	void OnMouseDown(){

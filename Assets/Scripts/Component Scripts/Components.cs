@@ -22,8 +22,6 @@ public class Components : MonoBehaviour {
 	private List <GameObject> wireList;
 	private Circuit ckt;
 	private Resistor[] spiceResistorArray;
-	private Resistor r1;
-	private Resistor r2;
 	Dictionary<string,string[]> lineDictionary = new Dictionary<string,string[]>();
 	private int verticalGridSize = 0;
 	private int horizontalGridSize = 0;
@@ -36,9 +34,12 @@ public class Components : MonoBehaviour {
 	private int componentCount = 0;
 	private int spiceResistorArrayCount = 0;
 	private SimulationData newData;
+	public static string currentStage = "stage1";
+	public static int numberOfStages = 0;
 
 	// Use this for initialization
 	void Start () {
+		currentStage = "stage1";
 		paused = false;
 
 		LoadCircuit ();
@@ -52,8 +53,43 @@ public class Components : MonoBehaviour {
 		BuildCircuit ();
 		SimulateCircuit ();
 		PrintComponents ();
+
 	}
 
+	public static void increaseStage(){
+		int stageNumber = Int32.Parse(currentStage.Substring (5));
+		if (stageNumber < numberOfStages) {
+			EfxUpdater.playLevelSwitchSoundStatic ();
+		} else {
+			UpdateFeedback.updateMessage ("Final stage reached!");
+		}
+
+	}
+
+	private void CheckChangeStage(){
+		if (numberOfResistors == 1) {
+			int stageNumber = Int32.Parse (currentStage.Substring (5));
+			if (stageNumber < numberOfStages) {
+				stageNumber++;
+				currentStage = "stage" + stageNumber.ToString ();
+				lineDictionary = new Dictionary<string,string[]> ();
+				verticalGridSize = 0;
+				horizontalGridSize = 0;
+				ClearAll ();
+				LoadCircuit ();
+				ClearAll ();
+				RenderCircuit ();
+				ConnectCircuit ();
+				BuildCircuit ();
+				SimulateCircuit ();
+				UpdateHistory.clearHistory ();
+				EfxUpdater.playLevelSwitchSoundStatic ();
+			} else {
+				UpdateFeedback.updateMessage ("Congrats you have passed all stages!!");
+			}
+		}
+	}
+		
 	private void ClearAll(){
 		if (componentsList != null) {
 			foreach (GameObject component in componentsList) {
@@ -74,10 +110,12 @@ public class Components : MonoBehaviour {
 		resistorList = new List <GameObject> ();
 		spiceResistorArray = new SpiceSharp.Components.Resistor[verticalGridSize*horizontalGridSize];
 		ResistorScript.selectedList.Clear ();
+		numberOfStages = CircuitLoader.GetNumberOfStages ();
 	}
 
 	// Update is called once per frame
 	void Update () {
+		CheckChangeStage ();
 	}
 
 	public static bool increaseSelected(){
@@ -327,7 +365,7 @@ public class Components : MonoBehaviour {
 	}
 
 	private void LoadCircuit(){
-		StreamReader reader = CircuitLoader.ReadString ();
+		StreamReader reader = CircuitLoader.ReadString (currentStage);
 		string circuitLine = reader.ReadLine ();
 		int count = 65;
 		while (circuitLine != null) {

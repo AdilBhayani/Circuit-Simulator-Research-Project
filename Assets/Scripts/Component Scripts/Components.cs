@@ -7,6 +7,7 @@ using SpiceSharp.Simulations;
 using System.IO;
 using System;
 using SpiceSharp.Circuits;
+using UnityEngine.UI;
 
 public class Components : MonoBehaviour {
 	public GameObject Node;
@@ -14,6 +15,7 @@ public class Components : MonoBehaviour {
 	public GameObject WireVertical;
 	public GameObject Resistor;
 	public Transform circuitPanel;
+	public Text stageTitleText;
 	private static int selectedComponentCount;
 	private static bool paused;
 	private List <GameObject> componentsList;
@@ -36,9 +38,11 @@ public class Components : MonoBehaviour {
 	private SimulationData newData;
 	public static string currentStage = "stage1";
 	public static int numberOfStages = 0;
+	private bool gameFinished = false;
 
 	// Use this for initialization
 	void Start () {
+		gameFinished = false;
 		currentStage = "stage1";
 		paused = false;
 
@@ -84,8 +88,12 @@ public class Components : MonoBehaviour {
 				SimulateCircuit ();
 				UpdateHistory.clearHistory ();
 				EfxUpdater.playLevelSwitchSoundStatic ();
-			} else {
+				ScoreManager.IncreaseScore ((int) (TimerUIUpdater.currentTime * 5));
+			} else if (!gameFinished) {
+				ScoreManager.IncreaseScore ((int) (TimerUIUpdater.currentTime * 5));
 				UpdateFeedback.updateMessage ("Congrats you have passed all stages!!");
+				TimerUIUpdater.StopTimer ();
+				gameFinished = true;
 			}
 		}
 	}
@@ -223,6 +231,7 @@ public class Components : MonoBehaviour {
 			Debug.Log ("current1: " + current1 + " current2: " + current2);
 			if (Math.Abs (current1 - current2) < 0.0000001f) {
 				Debug.Log ("In series");
+				ScoreManager.IncreaseScore (100);
 				UpdateHistory.appendToHistory ("Series Transform: \nR(" + String.Format("{0:0.00}",value1) + ") & R(" + String.Format("{0:0.00}",value2) +")\n");
 				GameObject secondResistorObject = GetResistorByID (secondID);
 				GameObject firstResistorObject = GetResistorByID (firstID);
@@ -293,6 +302,7 @@ public class Components : MonoBehaviour {
 			Debug.Log ("Voltage1: " + voltage1 + " Voltage 2: " + voltage2);
 			if (Math.Abs (voltage1 - voltage2) < 0.0000001f) {
 				Debug.Log ("In parallel");
+				ScoreManager.IncreaseScore (100);
 				UpdateHistory.appendToHistory ("Parallel Transform: \nR(" + String.Format("{0:0.00}",value1) + ") & R(" + String.Format("{0:0.00}",value2) +")\n");
 				GameObject secondResistorObject = GetResistorByID (secondID);
 				GameObject firstResistorObject = GetResistorByID (firstID);
@@ -365,6 +375,7 @@ public class Components : MonoBehaviour {
 	}
 
 	private void LoadCircuit(){
+		stageTitleText.text = "Stage " + currentStage.Substring (5);
 		StreamReader reader = CircuitLoader.ReadString (currentStage);
 		string circuitLine = reader.ReadLine ();
 		int count = 65;

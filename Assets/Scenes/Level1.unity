@@ -735,6 +735,12 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 319355461}
+--- !u!114 &419221710 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 11400004, guid: a93c012dd9ef6454fa7d140e976926f7,
+    type: 2}
+  m_PrefabInternal: {fileID: 543790267}
+  m_Script: {fileID: 708705254, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
 --- !u!1001 &543790267
 Prefab:
   m_ObjectHideFlags: 0
@@ -2744,6 +2750,7 @@ GameObject:
   - component: {fileID: 1549780497}
   - component: {fileID: 1549780499}
   - component: {fileID: 1549780498}
+  - component: {fileID: 1549780500}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -2808,6 +2815,18 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1549780496}
+--- !u!114 &1549780500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1549780496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 247a7d803a4738e46b63ba72cb0c4203, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreText: {fileID: 1549780498}
 --- !u!1 &1562284683
 GameObject:
   m_ObjectHideFlags: 0
@@ -3082,6 +3101,7 @@ MonoBehaviour:
     type: 2}
   Resistor: {fileID: 1231107963815144, guid: 01cdc716a6fd54543aff295ff46cdbcf, type: 2}
   circuitPanel: {fileID: 1693797325}
+  stageTitleText: {fileID: 419221710}
 --- !u!114 &1693797327
 MonoBehaviour:
   m_ObjectHideFlags: 0

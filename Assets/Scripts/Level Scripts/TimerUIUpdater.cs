@@ -5,24 +5,36 @@ using UnityEngine.UI;
 
 public class TimerUIUpdater : MonoBehaviour {
 
-    public static float startTime = 90.0f;
+    public static float currentTime = 90.0f;
     public Text timerText;
     private int minutes;
     private int seconds;
+	private static bool running;
 
 	void Start () {
-		startTime = 90.0f;
+		currentTime = 90.0f;
+		running = true;
 	}
 
 	// Update is called once per frame
 	void Update () {
-        startTime -= Time.deltaTime;
-        minutes = (int)startTime / 60;
-        seconds = (int)startTime - minutes * 60;
-        timerText.text = string.Format("Timer: {0}:{1}", minutes.ToString("D2"),seconds.ToString("D2"));
+		if (running) {
+			currentTime -= Time.deltaTime;
+			minutes = (int)currentTime / 60;
+			seconds = (int)currentTime - minutes * 60;
+			timerText.text = string.Format ("Timer: {0}:{1}", minutes.ToString ("D2"), seconds.ToString ("D2"));
+		}
     }
 
 	public static void ResetStartTime(){
-		startTime = 90.0f;
+		currentTime = 90.0f;
+	}
+
+	public static void StopTimer(){
+		running = false;
+	}
+
+	public static void ResumeTimer(){
+		running = true;
 	}
 }

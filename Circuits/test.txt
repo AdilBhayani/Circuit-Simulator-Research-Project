@@ -1,6 +1,7 @@
 //Key: N=Node, Wh= Wire horizontal, Rh10 = Resistor horizontal 10 ohms
 //Wv = Wire vertical, x = blank
 //Resistors must be connected with intermitent wires AND nodes
+//Please ensure that all rows are of equal length
 N,Wh,Rh12,Wh,N,Wh,Rh11,Wh,N,Wh,Rh13.5,Wh,N
 x,x,x,x,x,x,x,x,Wv,x,x,x,Wv
 x,x,N,Wh,Rh16,Wh,N,Wh,N,x,x,x,Wv

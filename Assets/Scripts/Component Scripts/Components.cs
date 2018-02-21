@@ -51,6 +51,7 @@ public class Components : MonoBehaviour {
 
 		BuildCircuit ();
 		SimulateCircuit ();
+		PrintComponents ();
 	}
 
 	private void ClearAll(){
@@ -108,6 +109,7 @@ public class Components : MonoBehaviour {
 	}
 
 	private void createNode(string ID, float anchorX, float anchorY, bool first, bool last, string connectionTop, string connectionRight, string connectionDown, string connectionLeft, string location){
+		Debug.Log ("Node ID: " + ID + " anchorX: " + anchorX + " anchorY: " + anchorY);
 		GameObject newNode = (GameObject)Instantiate (Node, new Vector3 (0, 0, 0), Quaternion.identity);
 		newNode = setPosition (newNode, ID, anchorX, anchorX, anchorY, anchorY);
 		newNode.GetComponent<NodeScript> ().setID (ID);
@@ -135,6 +137,7 @@ public class Components : MonoBehaviour {
 	}
 
 	private void createWire(string ID, float xStart, float xEnd, float yStart, float yEnd, float scale, bool vertical){
+		Debug.Log ("Wire ID is: " + ID + " xStart is " + xStart + " XEnd is: " + xEnd + " yStart is: " + yStart + " yEnd is: " + yEnd);
 		GameObject newWire;
 		if (vertical) {
 			newWire = (GameObject)Instantiate (WireVertical, new Vector3 (0, 0, 0), Quaternion.identity);
@@ -431,7 +434,7 @@ public class Components : MonoBehaviour {
 					lastNode = true;
 				}
 				string location = ConvertIndexToLetter (row) + x.ToString ();
-				createNode ("N" + numberOfNodes.ToString (), x * 0.9f / horizontalGridSize + 0.05f, verticalHeight, firstNode, lastNode, null, null, null, null, location);
+				createNode ("N" + numberOfNodes.ToString (), x * 0.8f / (horizontalGridSize - 1) + 0.05f, verticalHeight, firstNode, lastNode, null, null, null, null, location);
 				numberOfNodes++;
 				rendered [row, x] = true;
 				break;
@@ -443,10 +446,10 @@ public class Components : MonoBehaviour {
 						rendered [row, newX] = true;
 						newX++;
 					}
-					float minX = x * 0.9f / horizontalGridSize - 0.05f;
-					float maxX = newX * 0.9f / horizontalGridSize + 0.05f;
-					Debug.Log ("horizontalGridSize is: " + horizontalGridSize);
-					createWire ("W" + numberOfWires.ToString (), minX, maxX, verticalHeight, verticalHeight, (maxX - minX) * 10.0f / (horizontalGridSize/9.0f), false);
+					float minX = (x - 1) * 0.8f / (horizontalGridSize - 1) + 0.05f;
+					float maxX = newX * 0.8f / (horizontalGridSize - 1) + 0.05f;
+					Debug.Log ("horizontalGridSize is: " + horizontalGridSize + " x is: " + x + " newX is: " + newX);
+					createWire ("W" + numberOfWires.ToString (), minX, maxX, verticalHeight, verticalHeight, (maxX - minX) * 10.0f, false);
 					numberOfWires++;
 					rendered [row, x] = true;
 				}
@@ -454,22 +457,30 @@ public class Components : MonoBehaviour {
 			case "Wv":
 				if (rendered [row, x] == false) {
 					Debug.Log ("Rendering vertical wire");
+					Debug.Log ("verticalHeight is: " + verticalHeight);
 					int newRow = row + 1;
+					int rowCounter = 1;
 					string letterString = ConvertIndexToLetter (newRow);
 					string[] newLineComponents = lineDictionary [letterString];
+					bool looped = false;
 					while (newLineComponents [x] == "Wv") {
+						looped = true;
 						rendered [newRow, x] = true;
 						string letter = ConvertIndexToLetter (newRow);
 						newRow++;
 						newLineComponents = lineDictionary [letter];
+						rowCounter++;
 					}
-					float minX = x * 0.9f / horizontalGridSize + 0.05f;
-					float maxY = verticalHeight + 1.0f / verticalGridSize;
+					if (looped)
+						rowCounter--;
+					Debug.Log ("rowCounter is: " + rowCounter);
+					float minX = x * 0.8f / (horizontalGridSize - 1) + 0.05f;
+					float maxY = verticalHeight + 0.8f / (verticalGridSize - 1);
 					Debug.Log ("NewRow is: " + newRow);
-					float minY = (verticalGridSize - newRow - 1) * 0.2f + 0.05f;
+					float minY = verticalHeight - rowCounter * 0.8f / (verticalGridSize - 1);
 					Debug.Log ("maxY is: " + maxY);
 					Debug.Log ("minY is: " + minY);
-					createWire ("W" + numberOfWires.ToString (), minX, minX, minY, maxY, (maxY - minY) * 10.0f / (verticalGridSize/5.0f), true);
+					createWire ("W" + numberOfWires.ToString (), minX, minX, minY, maxY, (maxY - minY) * 10.0f, true);
 					numberOfWires++;
 					rendered [row, x] = true;
 				}
@@ -482,7 +493,7 @@ public class Components : MonoBehaviour {
 					string resistorLocation = ConvertIndexToLetter (row) + x.ToString ();
 					Debug.Log (resistance.ToString());	
 					Debug.Log (resistorLocation);
-					createResistor ("R" + numberOfResistors.ToString (), x * 0.9f / horizontalGridSize + 0.05f, verticalHeight,resistance, resistorLocation);
+					createResistor ("R" + numberOfResistors.ToString (), x * 0.8f / (horizontalGridSize - 1) + 0.05f, verticalHeight,resistance, resistorLocation);
 					numberOfResistors++;
 				}
 				break;

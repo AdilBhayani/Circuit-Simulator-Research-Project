@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// EfxUpdater is the class responsible for managing the execution of sounds
+/// </summary>
 public class EfxUpdater : MonoBehaviour {
 	private static string currentEfxTitle = "currentEfx";
 	

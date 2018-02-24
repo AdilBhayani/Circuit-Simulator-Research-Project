@@ -4,6 +4,9 @@ using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
 
+/// <summary>
+/// CircuitLoader is a class that handles the loading of files from the Circuits folder.
+/// </summary>
 public class CircuitLoader : MonoBehaviour {
 
 	// Use this for initialization

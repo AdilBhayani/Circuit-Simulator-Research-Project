@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// LivesManager is responsible for the management of the lives during gameplay
+/// </summary>
 public class LivesManager : MonoBehaviour {
 	public Text livesText;
 	private static int livesLeft;

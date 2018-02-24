@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This class is responsible for the beahviour of wires.
+/// Wires are all instatiated with aide from this file
+/// </summary>
 public class WireScript : MonoBehaviour {
 	public GameObject wire;
 	public GameObject wireSprite;

@@ -3,7 +3,22 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - OverallMenu
+  - InstructionsMenu
+  - AudioMenu
+  - CreditsMenu
+  - Wire
+  - Resistor
+  - Value
+  - Connector
+  - Connector2
+  - Connector1
+  - Node
+  - Connector3
+  - Connector4
+  - firstNode
+  - lastNode
   layers:
   - Default
   - TransparentFX

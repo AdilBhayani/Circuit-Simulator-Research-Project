@@ -1185,26 +1185,3 @@ public class Components : MonoBehaviour {
 		}
 	}
 }
-
-/*
- Debug.Log ("Here");
-string printString = "";
-foreach (KeyValuePair<string, string[]> kvp in lineDictionary){
-	printString += string.Format ("Key = {0}, Value = {1}", kvp.Key, string.Join(".", kvp.Value));
-	printString += "\n";
-}
-Debug.Log (printString);
-
-
-foreach (GameObject componentObject in componentsList) {
-	if (componentObject.GetComponents<ResistorScript> ().Length != 0) {
-		if (componentObject.GetComponent<ResistorScript> ().getID () == "R1") {
-			Destroy (componentObject);
-			selectedComponentCount = 0;
-		}
-		if (componentObject.GetComponent<ResistorScript> ().getID () == "R0") {
-			componentObject.GetComponent<ResistorScript> ().setValue (25.0f);
-		}
-	}
-}
-*/

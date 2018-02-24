@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This class is responsible for the beahviour of nodes.
+/// Nodes are all instatiated with aide from this file
+/// </summary>
 public class NodeScript : MonoBehaviour {
 	public GameObject node;
 	private SpriteRenderer spirit;

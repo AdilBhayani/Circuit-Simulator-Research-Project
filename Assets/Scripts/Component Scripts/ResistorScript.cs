@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// This class is responsible for the beahviour of resistors.
+/// Resistors are all instatiated with aide from this file
+/// </summary>
 public class ResistorScript : MonoBehaviour {
 	public GameObject resistor;
 	public GameObject textObject;

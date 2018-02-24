@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// ScoreManager is responsible for updating the score when the player does a correct transform or passes a stage.
+/// </summary>
 public class ScoreManager : MonoBehaviour {
 	public Text scoreText;
 	private static int score;

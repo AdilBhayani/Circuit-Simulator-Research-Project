@@ -2,6 +2,9 @@
 using System.Collections;
 using UnityEngine.UI;
 
+/// <summary>
+/// Plays music and updates the volume
+/// </summary>
 public class SoundManager : MonoBehaviour
 {
 	public AudioClip buttonPress;

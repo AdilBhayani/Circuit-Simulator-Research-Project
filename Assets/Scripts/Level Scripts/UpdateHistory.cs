@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// UpdateHistory updates the history on the left side of the screen to show the past transformations.
+/// </summary>
 public class UpdateHistory : MonoBehaviour {
 	private static string history;
 	public GameObject historyPanel;

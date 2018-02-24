@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Handles the selecting of buttons
+/// </summary>
 public class SelectOnInput : MonoBehaviour {
 
 	public EventSystem eventSystem;

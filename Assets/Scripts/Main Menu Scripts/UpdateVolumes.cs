@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// UpdateVolumes changes the volume based on the position of sliders in the menu.
+/// </summary>
 public class UpdateVolumes : MonoBehaviour {
     public Slider masterSlider;
     public Slider musicSlider;

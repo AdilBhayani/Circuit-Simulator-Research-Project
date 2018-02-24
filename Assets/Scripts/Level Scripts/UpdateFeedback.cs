@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// UpdateFeedback shows helpful messaged to the user to guide them as they play through the game.
+/// </summary>
 public class UpdateFeedback : MonoBehaviour {
 	private static string message;
 	private static bool messageUpdated;

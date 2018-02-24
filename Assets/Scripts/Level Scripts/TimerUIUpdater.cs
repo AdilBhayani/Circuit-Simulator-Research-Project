@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// TimerUIUpdater keep track of the time since th game was started and ends the game once time goes to zero.
+/// </summary>
 public class TimerUIUpdater : MonoBehaviour {
 
     public static float currentTime = 90.0f;

@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// EscapeMenu shows the menu that is triggered on/off when user hits escape.
+/// </summary>
 public class EscapeMenu : MonoBehaviour {
     public CanvasGroup uiCanvasGroup;
     public CanvasGroup confirmQuitCanvasGroup;
     private bool quitting = false;
     private string overallMenuTitle = "OverallMenu";
+
     // Use this for initialization
     private void Start ()
     {

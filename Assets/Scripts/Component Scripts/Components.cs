@@ -9,6 +9,10 @@ using System;
 using SpiceSharp.Circuits;
 using UnityEngine.UI;
 
+/// <summary>
+/// Components Class manages the behaviour of all the components as a whole to verify which transforms are valid
+/// and then performs those transforms to obtain new circuits.
+/// </summary>
 public class Components : MonoBehaviour {
 	public GameObject Node;
 	public GameObject WireHorizontal;
@@ -320,12 +324,15 @@ public class Components : MonoBehaviour {
 			Resistor spiceResistor1 = GetSpiceResistorByID (firstID);
 			Resistor spiceResistor2 = GetSpiceResistorByID (secondID);
 
+			double current1 = Math.Abs(spiceResistor1.GetCurrent (ckt));
+			double current2 = Math.Abs(spiceResistor2.GetCurrent (ckt));
+
 			double voltage1 = Math.Abs (newData.GetVoltage (spiceResistor1.GetNode (0)) - newData.GetVoltage (spiceResistor1.GetNode (1)));
 			double voltage2 = Math.Abs (newData.GetVoltage (spiceResistor2.GetNode (0)) - newData.GetVoltage (spiceResistor2.GetNode (1)));
 			double value1 = spiceResistor1.Ask ("resistance");
 			double value2 = spiceResistor2.Ask ("resistance");
 			Debug.Log ("Voltage1: " + voltage1 + " Voltage 2: " + voltage2);
-			if (Math.Abs (voltage1 - voltage2) < 0.0000001f) {
+			if (Math.Abs (voltage1 - voltage2) < 0.0000001f && Math.Abs(current1- current2) > 0.0000001f)  {
 				Debug.Log ("In parallel");
 				if (numberOfResistors != 2) {
 					ScoreManager.IncreaseScore (100);
@@ -365,23 +372,20 @@ public class Components : MonoBehaviour {
 						}
 						currentIndex--;
 					}
-					//lineDictionary [firstNode0.Substring (0, 1)] = firstLine;
-					string[] secondLine = lineDictionary [location2.Substring (0, 1)];
-					if (string.Compare (secondNode0.Substring (0, 1), secondNode1.Substring (0, 1)) == 0) {
-						secondLine [Int32.Parse (location2.Substring (1, location2.Length - 1))] = "Rh" + ((value1*value2)/(value1 + value2)).ToString ();
-					} else {
-						secondLine [Int32.Parse (location2.Substring (1, location2.Length - 1))] = "Rv" + ((value1*value2)/(value1 + value2)).ToString ();
-					}
-					//lineDictionary [secondNode0.Substring (0, 1)] = secondLine;
-					string printString = "";
-					foreach (KeyValuePair<string, string[]> kvp in lineDictionary) {
-						printString += string.Format ("Key = {0}, Value = {1}", kvp.Key, string.Join (".", kvp.Value));
-						printString += "\n";
-					}
-					Debug.Log (printString);
-
 				} else {
 					Debug.Log ("Vertically connected");
+					string[] firstLine = lineDictionary [location1.Substring (0, 1)];
+					firstLine [Int32.Parse (location1.Substring (1, location1.Length - 1))] = "x";
+					string empty = "x";
+					DestroyConnections (location1, "up");
+					DestroyConnections (location1, "down");
+
+				}
+				string[] secondLine = lineDictionary [location2.Substring (0, 1)];
+				if (string.Compare (secondNode0.Substring (0, 1), secondNode1.Substring (0, 1)) == 0) {
+					secondLine [Int32.Parse (location2.Substring (1, location2.Length - 1))] = "Rh" + ((value1*value2)/(value1 + value2)).ToString ();
+				} else {
+					secondLine [Int32.Parse (location2.Substring (1, location2.Length - 1))] = "Rv" + ((value1*value2)/(value1 + value2)).ToString ();
 				}
 				RemoveUnusedWires ();
 				ClearAll ();
